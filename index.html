@@ -1,0 +1,1655 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <title>Produção DelMORO (v2)</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png">
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#111827;
+      --muted:#94a3b8;
+      --text:#e5e7eb;
+      --accent:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --line:#1f2937;
+      --shadow: 0 10px 20px rgba(0,0,0,.25);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial;
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(34,197,94,.25), transparent 45%),
+                  radial-gradient(900px 500px at 90% 0%, rgba(59,130,246,.18), transparent 50%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+    header{
+      position:sticky; top:0; z-index:10;
+      background: rgba(11,18,32,.75);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(148,163,184,.15);
+      padding: 14px 14px 10px;
+    }
+    .title{
+      display:flex; align-items:center; gap:10px; justify-content:space-between;
+    }
+    .title h1{
+      font-size:16px; margin:0; letter-spacing:.2px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .brandLogo{height:26px; width:auto; display:inline-block; vertical-align:middle; filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));}
+    .badge{
+      font-size:12px;
+      padding:4px 8px;
+      border:1px solid rgba(148,163,184,.22);
+      color:var(--muted);
+      border-radius:999px;
+      background: rgba(15,23,42,.6);
+    }
+    nav{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:8px;
+    }
+    .tab{
+      border:1px solid rgba(148,163,184,.18);
+      background: rgba(17,24,39,.6);
+      color: var(--text);
+      padding:10px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      display:flex; align-items:center; justify-content:center;
+      gap:6px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .tab.active{
+      border-color: rgba(34,197,94,.45);
+      background: rgba(34,197,94,.12);
+      box-shadow: 0 8px 16px rgba(34,197,94,.12);
+    }
+    main{ padding: 14px; max-width: 1280px; margin: 0 auto; }
+    .grid{ display:grid; grid-template-columns: 1fr; gap:12px; }
+    @media (min-width: 860px){
+      .grid.two{ grid-template-columns: 2fr 1fr; }
+      .grid.twoEq{ grid-template-columns: 1fr 1fr; }
+    }
+    .card{
+      background: rgba(17,24,39,.78);
+      border:1px solid rgba(148,163,184,.15);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(148,163,184,.12);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .card .hd h2{ margin:0; font-size:14px; letter-spacing:.2px; }
+    .card .bd{ padding: 14px; }
+    .muted{ color:var(--muted); font-size:12px; }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
+    .row > *{ flex: 1; min-width: 160px; }
+    label{ display:block; font-size:12px; color:var(--muted); margin-bottom:6px; }
+    input, select, textarea{
+      width:100%;
+      padding:10px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(148,163,184,.18);
+      background: rgba(2,6,23,.35);
+      color: var(--text);
+      outline: none;
+    }
+    textarea{ min-height: 80px; resize: vertical; }
+    .btn{
+      border:none;
+      border-radius: 12px;
+      padding:10px 12px;
+      cursor:pointer;
+      color: #04110a;
+      background: var(--accent);
+      font-weight: 800;
+      display:inline-flex; gap:8px; align-items:center; justify-content:center;
+      user-select:none;
+    }
+    .btn.secondary{
+      background: transparent;
+      color: var(--text);
+      border:1px solid rgba(148,163,184,.22);
+    }
+    .btn.danger{
+      background: rgba(239,68,68,.16);
+      color: #fecaca;
+      border: 1px solid rgba(239,68,68,.35);
+    }
+    .btn.warn{
+      background: rgba(245,158,11,.18);
+      color: #fde68a;
+      border: 1px solid rgba(245,158,11,.35);
+    }
+    .hr{ height:1px; background: rgba(148,163,184,.12); margin: 12px 0; }
+    .small{ font-size:11px; color:var(--muted); }
+    .notice{
+      border-radius: 16px;
+      padding: 12px;
+      border:1px solid rgba(148,163,184,.18);
+      background: rgba(15,23,42,.4);
+    }
+    .table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 14px;
+      border:1px solid rgba(148,163,184,.15);
+    }
+    .table th, .table td{
+      padding:10px;
+      font-size:12px;
+      border-bottom:1px solid rgba(148,163,184,.12);
+      text-align:left;
+    }
+    .table th{ color: var(--muted); font-weight: 800; background: rgba(15,23,42,.45); }
+    .table tr:last-child td{ border-bottom:none; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New"; }
+    .right{ text-align:right; }
+    .nowrap{ white-space:nowrap; }
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      background: rgba(17,24,39,.92);
+      border:1px solid rgba(148,163,184,.18);
+      padding:10px 12px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      display:none;
+      max-width: min(92vw, 680px);
+      color: var(--text);
+      font-size: 12px;
+      z-index: 999;
+    }
+    .toast.show{ display:block; }
+
+    /* Product tiles (novo layout) */
+    .grid.tiles{ grid-template-columns: repeat(2, 1fr); gap:12px; }
+    @media (min-width: 860px){ .grid.tiles{ grid-template-columns: repeat(4, 1fr); } }
+    .tile{
+      position:relative;
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(148,163,184,.16);
+      background: rgba(17,24,39,.78);
+      box-shadow: var(--shadow);
+      cursor:pointer;
+      user-select:none;
+      min-height: 190px;
+    }
+    .tile .img{ position:absolute; inset:0; background: rgba(2,6,23,.25); display:flex; align-items:center; justify-content:center; color: rgba(148,163,184,.55); font-weight:900; font-size: 46px; }
+    .tile .img img{ width:100%; height:100%; object-fit:cover; transform: scale(1.03); }
+    .tile .overlay{ position:absolute; inset:0; background: linear-gradient(to top, rgba(2,6,23,.90) 0%, rgba(2,6,23,.30) 55%, rgba(2,6,23,.10) 100%); }
+    .tile .meta{ position:absolute; left:12px; right:12px; bottom:12px; display:flex; flex-direction:column; gap:6px; }
+    .tile .meta .name{ font-size: 14px; font-weight: 900; letter-spacing: .2px; text-shadow: 0 6px 18px rgba(0,0,0,.45); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .tile .meta .code{ font-size: 12px; color: rgba(229,231,235,.92); display:flex; gap:8px; align-items:center; }
+    .tile .meta .code .mono{ font-weight:900; }
+    .tile .badge-status{ position:absolute; top:10px; right:10px; border-radius: 999px; padding: 6px 10px; font-size: 11px; border:1px solid rgba(148,163,184,.18); background: rgba(2,6,23,.55); backdrop-filter: blur(8px); color: var(--muted); display:flex; gap:6px; align-items:center; }
+    .tile.ok{ border-color: rgba(34,197,94,.32); }
+    .tile.warn{ border-color: rgba(245,158,11,.32); }
+    .tile.bad{ border-color: rgba(239,68,68,.32); }
+    /* Layout helpers for tablet/PC */
+.container{ max-width: 1280px; margin: 0 auto; }
+.headerActions{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; align-items:center; }
+.headerActions .btn{ padding:9px 12px; }
+@media (min-width: 860px){
+  header{ padding: 16px 18px 12px; }
+  .title h1{ font-size: 18px; }
+  .brandLogo{ height: 30px; }
+  nav{ max-width: 1280px; margin-left:auto; margin-right:auto; }
+  main{ padding: 18px; }
+}
+.sectionTitle{
+  display:flex; align-items:center; gap:10px;
+  font-weight: 900;
+  margin: 2px 0 10px;
+  font-size: 13px;
+  color: var(--text);
+}
+.tableWrap{ overflow:auto; -webkit-overflow-scrolling: touch; border-radius: 14px; }
+.table{ min-width: 680px; }
+@media (min-width: 860px){
+  .table{ min-width: 0; }
+}
+
+/* Modal (admin login) */
+.modal{ position:fixed; inset:0; display:none; z-index:50; }
+.modal[aria-hidden="false"]{ display:block; }
+.modalBackdrop{ position:absolute; inset:0; background: rgba(2,6,23,.55); backdrop-filter: blur(4px); }
+.modalCard{ position:relative; max-width: 820px; width: calc(100% - 22px); margin: 70px auto; border-radius: 18px; border: 1px solid rgba(148,163,184,.18); background: rgba(15,23,42,.95); box-shadow: 0 18px 70px rgba(0,0,0,.45); overflow:hidden; }
+.modalCard .hd{ padding: 14px 14px 10px; border-bottom: 1px solid rgba(148,163,184,.12); }
+.modalCard .bd{ padding: 14px; }
+  
+/* Footer (acesso admin discreto) */
+.footerBar{
+  max-width:1280px;
+  margin: 0 auto;
+  padding: 10px 14px 22px;
+  display:flex;
+  justify-content:flex-end;
+}
+.adminLink{
+  border:none;
+  background: transparent;
+  color: rgba(148,163,184,.75);
+  font-size: 11px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor:pointer;
+}
+.adminLink:hover{
+  background: rgba(148,163,184,.08);
+  color: rgba(226,232,240,.9);
+}
+
+  </style>
+</head>
+<body>
+<header>
+  <div class="title">
+    <h1>
+      <span style="display:inline-flex;width:10px;height:10px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 6px rgba(34,197,94,.15)"></span>
+      <img src="./assets/delmoro-logo.png" alt="DelMORO" class="brandLogo"> <span>Produção DelMORO</span> <span class="badge">v2</span>
+    </h1>
+    <div class="headerActions">
+      <span id="adminBadge" class="badge" style="display:none">ADM</span>
+      <button class="btn secondary" id="btnExport">Exportar</button>
+      <label class="btn secondary" style="margin:0; cursor:pointer;">
+        Importar<input id="fileImport" type="file" accept="application/json" style="display:none">
+      </label>
+      <button class="btn danger" id="btnReset">Reset</button>
+      <button class="btn secondary" id="btnAdminLogin" style="display:none">Acesso admin</button>
+      <button class="btn secondary" id="btnAdminLogout" style="display:none">Sair</button>
+    </div>
+  </div>
+  <nav>
+    <div class="tab active" data-tab="producao">🍞 Produção</div>
+    <div class="tab" data-tab="vendas">🧾 Vendas</div>
+    <div class="tab" data-tab="historico">📈 Histórico</div>
+    <div class="tab" data-tab="config">⚙️ Config</div>
+  </nav>
+</header>
+
+<main>
+  <section id="tab-producao">
+    <div class="grid two">
+      <div class="card">
+        <div class="hd">
+          <h2>Produtos disponíveis</h2>
+          <div class="muted" id="prodCount">0</div>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div style="flex:2; min-width:220px">
+              <label>Buscar</label>
+              <input id="searchProd" placeholder="Digite o nome, cod. balança ou cod. receita" />
+            </div>
+            <div style="max-width:240px">
+              <label>Filtro</label>
+              <select id="filterAlert">
+                <option value="all">Todos</option>
+                <option value="need">⚠️ Precisa produzir (zerou)</option>
+                <option value="low">🔶 Baixo estoque</option>
+              </select>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="grid tiles" id="prodGrid"></div>
+          <div class="notice muted" id="emptyProd" style="display:none">
+            Nenhum produto cadastrado ainda. Vá em <strong>Config</strong> e adicione sua primeira receita.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <h2>Calcular produção</h2>
+          <span class="muted" id="calcStatus" style="font-weight:800">Selecione um produto</span>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label>Produto</label>
+              <select id="selProduto"></select>
+            </div>
+            <div>
+              <label>Qtd. a produzir (unidades)</label>
+              <input id="inpQtdUn" type="number" min="0" step="1" placeholder="Ex.: 55" />
+            </div>
+          </div>
+          <div class="hr"></div>
+
+          <div class="notice muted" id="chipsInfo"></div>
+
+          <div class="hr"></div>
+          <div class="row" style="align-items:center">
+            <div style="flex:2; min-width:240px">
+              <div class="muted">Ingredientes (ajustado pela quantidade)</div>
+              <div class="small">Base: rendimento cadastrado (KG e unidades) → cálculo por proporcionalidade.</div>
+            </div>
+            <div class="row" style="gap:8px; justify-content:flex-end">
+              <button class="btn secondary" id="btnImprimirReceita" style="min-width:190px">Imprimir receita</button>
+              <button class="btn" id="btnRegistrarProducao" style="min-width:190px">Registrar produção</button>
+            </div>
+          </div>
+
+          <div class="tableWrap" style="margin-top:10px">
+            <table class="table" id="tblIngredientes">
+              <thead><tr><th>Produto / Insumo</th><th class="right">Qtde</th><th class="nowrap">Unid.</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="hr"></div>
+          <div class="notice" id="alertBox" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-vendas" style="display:none">
+    <div class="grid twoEq">
+      <div class="card">
+        <div class="hd"><h2>Registrar vendas do dia</h2><span class="muted">Alimente diariamente</span></div>
+        <div class="bd">
+          <div class="row">
+            <div><label>Data</label><input id="saleDate" type="date" /></div>
+            <div style="flex:2; min-width:240px"><label>Produto</label><select id="saleProduto"></select></div>
+            <div><label>Qtd vendida (unidades)</label><input id="saleUnits" type="number" min="0" step="1" placeholder="Ex.: 40" /></div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div>
+              <label class="muted">Ou (opcional) vender em KG</label>
+              <input id="saleKg" type="number" min="0" step="0.001" placeholder="Ex.: 8.200" />
+              <div class="small">Se você preencher KG, ele ignora unidades.</div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:10px; min-width:260px;">
+              <button class="btn" id="btnAddSale" style="flex:1">Adicionar venda</button>
+              <button class="btn secondary" id="btnClearSales" style="flex:1">Limpar dia</button>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="notice muted" id="kpiDay"></div>
+
+<div class="hr"></div>
+<div class="sectionTitle">Registrar quebras do dia <span class="muted" style="font-weight:700">(desconta do estoque)</span></div>
+<div class="row">
+  <div style="flex:2; min-width:240px"><label>Produto</label><select id="breakProduto"></select></div>
+  <div><label>Qtd quebrada (unidades)</label><input id="breakUnits" type="number" min="0" step="1" placeholder="Ex.: 5" /></div>
+</div>
+<div class="row" style="margin-top:10px">
+  <div>
+    <label class="muted">Ou (opcional) quebrar em KG</label>
+    <input id="breakKg" type="number" min="0" step="0.001" placeholder="Ex.: 1.250" />
+    <div class="small">Se você preencher KG, ele ignora unidades.</div>
+  </div>
+  <div>
+    <label>Motivo</label>
+    <select id="breakReason">
+      <option value="">Selecione…</option>
+      <option value="Vencimento">Vencimento</option>
+      <option value="Avaria">Avaria</option>
+      <option value="Erro na Produção">Erro na Produção</option>
+    </select>
+  </div>
+  <div style="display:flex; align-items:flex-end; gap:10px; min-width:260px;">
+    <button class="btn" id="btnAddBreak" style="flex:1">Adicionar quebra</button>
+    <button class="btn secondary" id="btnClearBreaks" style="flex:1">Limpar dia</button>
+  </div>
+</div>
+        </div>
+      </div>
+
+          
+
+      <div class="card">
+        <div class="hd"><h2>Estoque (Produção × Vendas × Quebras)</h2><span class="muted">estimativa</span></div>
+        <div class="bd">
+          <div class="notice muted">
+            <strong>Como funciona:</strong> ao registrar uma <strong>produção</strong>, soma o <strong>KG produzido</strong>.
+            Ao registrar <strong>vendas</strong> ou <strong>quebras</strong>, subtrai. Isso gera o saldo (KG).
+          </div>
+          <div class="hr"></div>
+          <div class="tableWrap">
+            <table class="table" id="tblEstoque">
+              <thead><tr><th>Produto</th><th class="right">Produzido (KG)</th><th class="right">Vendido (KG)</th><th class="right">Quebra (KG)</th><th class="right">Saldo (KG)</th><th>Status</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="small" style="margin-top:10px">Quando “zerou”, o produto aparece com alerta na tela de produção.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-historico" style="display:none">
+    <div class="grid">
+      <div class="card">
+        <div class="hd"><h2>Histórico</h2><span class="muted">Produções, Vendas e Quebras</span></div>
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label>Período</label>
+              <select id="histRange">
+                <option value="7">7 dias</option>
+                <option value="15">15 dias</option>
+                <option value="30" selected>30 dias</option>
+                <option value="60">60 dias</option>
+              </select>
+            </div>
+            <div style="max-width:240px"><label>Produto (opcional)</label><select id="histProduto"></select></div>
+            <div style="display:flex; align-items:flex-end; gap:10px">
+              <button class="btn secondary" id="btnRefreshHist" style="min-width:180px">Atualizar</button>
+              <button class="btn warn" id="btnExportCSV" style="min-width:180px">Exportar CSV</button>
+              <button class="btn secondary" id="btnExportBreaksCSV" style="min-width:180px">Exportar Quebras</button>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <div class="grid twoEq">
+            <div>
+              <div class="muted">Produções</div>
+              <div style="overflow:auto; margin-top:8px">
+                <table class="table" id="tblHistProd">
+                  <thead><tr><th>Data</th><th>Produto</th><th class="right">Unid.</th><th class="right">KG</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+            <div>
+              <div class="muted">Vendas</div>
+              <div style="overflow:auto; margin-top:8px">
+                <table class="table" id="tblHistSales">
+                  <thead><tr><th>Data</th><th>Produto</th><th class="right">Unid. eq.</th><th class="right">KG</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="hr"></div>
+          <div>
+            <div class="muted">Quebras</div>
+            <div style="overflow:auto; margin-top:8px">
+              <table class="table" id="tblHistBreaks">
+                <thead><tr><th>Data</th><th>Produto</th><th>Motivo</th><th class="right">Unid. eq.</th><th class="right">KG</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <button class="btn danger" id="btnClearHistory">Apagar histórico</button>
+          <div class="small">Isso apaga produções, vendas e quebras, mas mantém as receitas configuradas.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-config" style="display:none">
+    <div class="grid twoEq">
+      <div class="card">
+        <div class="hd"><h2>Cadastro de receita</h2><span class="muted">base do sistema</span></div>
+        <div class="bd">
+          <div class="row">
+            <div style="flex:2; min-width:240px"><label>Produto</label><input id="cfgNome" placeholder="Ex.: Pão Caseiro Kg" /></div>
+            <div><label>Cod. de Balança</label><input id="cfgBalanca" placeholder="Ex.: 5210" /></div>
+            <div><label>Cod. da Receita</label><input id="cfgReceita" placeholder="Ex.: 4753" /></div>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <div><label>Rendimento (KG)</label><input id="cfgRendKg" type="number" step="0.001" placeholder="Ex.: 14.659" /></div>
+            <div><label>Rendimento (Unidades)</label><input id="cfgRendUn" type="number" step="1" placeholder="Ex.: 21" /></div>
+            <div><label>Baixo estoque (KG)</label><input id="cfgLowKg" type="number" step="0.001" placeholder="Ex.: 2.000" /></div>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <div>
+              <label>Imagem do produto (opcional)</label>
+              <input id="cfgImg" type="file" accept="image/*" />
+              <div class="small">Teste: salva no aparelho (localStorage).</div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <div class="row" style="align-items:center">
+            <div style="flex:2"><div class="muted">Receita Sistêmica</div><div class="small">Insumos + quantidade base + unidade.</div></div>
+            <button class="btn secondary" id="btnAddIng" style="min-width:190px">+ Ingrediente</button>
+          </div>
+
+          <div class="tableWrap" style="margin-top:10px">
+            <table class="table" id="tblCfgIng">
+              <thead><tr><th>Produto / Insumo</th><th class="right">Qtde</th><th class="nowrap">Unid.</th><th class="right">—</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="hr"></div>
+          <div class="row">
+            <button class="btn" id="btnSaveProduto">Salvar produto</button>
+            <button class="btn secondary" id="btnLoadExample">Carregar exemplo (Pão Caseiro)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd"><h2>Produtos cadastrados</h2><span class="muted">editar / excluir</span></div>
+        <div class="bd">
+          <div class="tableWrap">
+            <table class="table" id="tblProdutos">
+              <thead><tr><th>Produto</th><th class="right">KG</th><th class="right">Unid</th><th class="right">—</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="hr"></div>
+          <div class="notice muted">
+            <strong>Obs:</strong> tudo fica salvo em <span class="mono">localStorage</span>. Use <strong>Exportar</strong> para backup.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Admin login modal -->
+<div class="modal" id="adminModal" aria-hidden="true">
+  <div class="modalBackdrop" data-close="1"></div>
+  <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
+    <div class="hd" style="display:flex; align-items:center; justify-content:space-between; gap:10px">
+      <h2 id="adminModalTitle" style="margin:0">Acesso admin</h2>
+      <button class="btn secondary" id="btnAdminClose" type="button">Fechar</button>
+    </div>
+    <div class="bd">
+      <div class="notice muted" style="margin-top:0">
+        Use seu usuário admin para liberar Vendas, Histórico e Config.
+      </div>
+      <div class="row">
+        <div style="flex:1; min-width:220px">
+          <label>Email</label>
+          <input id="adminEmail" type="email" placeholder="admin@empresa.com" autocomplete="username" value="delmoro@produçao.com" />
+        </div>
+        <div style="flex:1; min-width:220px">
+          <label>Senha</label>
+          <input id="adminPass" type="password" placeholder="••••••••" autocomplete="current-password" value="10203040" />
+        </div>
+      </div>
+      <div class="row">
+        <div style="flex:1; min-width:220px">
+          <label>PIN</label>
+          <input id="adminPin" type="password" inputmode="numeric" placeholder="PIN" autocomplete="one-time-code" />
+        </div>
+      </div>
+      <div class="row" style="align-items:center; justify-content:space-between">
+        <div class="muted small" id="adminStatus">&nbsp;</div>
+        <button class="btn" id="btnAdminDoLogin" type="button" style="min-width:170px">Entrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<footer class="footerBar">
+  <button class="adminLink" id="btnAdminLoginFooter" type="button">Acesso admin</button>
+</footer>
+<script>
+const LS_KEY = "wap_producao_v2";
+function $(s){ return document.querySelector(s); }
+function $all(s){ return Array.from(document.querySelectorAll(s)); }
+function uid(){ return Math.random().toString(16).slice(2) + Date.now().toString(16); }
+function nowISODate(){
+  const d = new Date();
+  const tzOffset = d.getTimezoneOffset()*60000;
+  return new Date(Date.now()-tzOffset).toISOString().slice(0,10);
+}
+function toNum(v){
+  if(v===null || v===undefined) return 0;
+  const s = String(v).trim().replace(",", ".");
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+}
+function fmt(n, decimals=3){
+  const x = Number(n);
+  if(!Number.isFinite(x)) return "0";
+  return x.toLocaleString("pt-BR", {minimumFractionDigits: decimals, maximumFractionDigits: decimals});
+}
+function fmtInt(n){ return Math.round(Number(n)||0).toLocaleString("pt-BR"); }
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2200);
+}
+function escapeHtml(s){
+  return String(s||"")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+
+function loadState(){
+  const raw = localStorage.getItem(LS_KEY);
+  if(!raw) return { products: [], productions: [], sales: [], breaks: [] };
+  try{
+    const data = JSON.parse(raw);
+    return {
+      products: Array.isArray(data.products) ? data.products : [],
+      productions: Array.isArray(data.productions) ? data.productions : [],
+      sales: Array.isArray(data.sales) ? data.sales : [],
+    breaks: Array.isArray(data.breaks) ? data.breaks : (Array.isArray(data.quebras) ? data.quebras : []),
+    };
+  }catch(e){
+    return { products: [], productions: [], sales: [], breaks: [] };
+  }
+}
+function saveStateLocalOnly(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+function saveState(){
+  saveStateLocalOnly();
+  // Se o Firebase estiver ativo, salva também no Realtime Database (debounced)
+  try{ window.__delmoroSync?.scheduleSave?.(state); }catch(e){}
+}
+let state = loadState();
+
+// Expor hooks para o módulo Firebase (salvar/carregar no RTDB sem mexer na lógica do app)
+window.__delmoroApp = {
+  getState: ()=>state,
+  hydrateFromRemote: (remoteData)=>{
+    try{
+      const data = remoteData || {};
+      const normalized = {
+        products: Array.isArray(data.products) ? data.products : [],
+        productions: Array.isArray(data.productions) ? data.productions : [],
+        sales: Array.isArray(data.sales) ? data.sales : [],
+        breaks: Array.isArray(data.breaks) ? data.breaks : (Array.isArray(data.quebras) ? data.quebras : []),
+      };
+      state = normalized;
+      saveStateLocalOnly();
+
+      // Re-render nas telas (sem trocar regras de negócio)
+      try{ renderProducao?.(); }catch(e){}
+      try{ renderVendas?.(); }catch(e){}
+      try{ renderHistorico?.(); }catch(e){}
+      try{ renderConfig?.(); }catch(e){}
+    }catch(e){}
+  }
+};
+
+// Se o Firebase já estiver pronto, puxa do RTDB
+try{ window.__delmoroSync?.hydrateOnce?.(); }catch(e){}
+
+
+/* Tabs */
+const tabs = { producao: $("#tab-producao"), vendas: $("#tab-vendas"), historico: $("#tab-historico"), config: $("#tab-config") };
+function setTab(name){
+  $all(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab===name));
+  Object.entries(tabs).forEach(([k,el])=> el.style.display = (k===name) ? "" : "none");
+  if(name==="producao") renderProducao();
+  if(name==="vendas") renderVendas();
+  if(name==="historico") renderHistorico();
+  if(name==="config") renderConfig();
+}
+$all(".tab").forEach(t => t.addEventListener("click", ()=>setTab(t.dataset.tab)));
+
+/* Backup/Restore */
+$("#btnExport").addEventListener("click", ()=>{
+  const payload = { exportedAt:new Date().toISOString(), app:"Produção DelMORO", version:2, data:state };
+  const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `backup_producao_delmoro_${nowISODate()}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+$("#fileImport").addEventListener("change", async (ev)=>{
+  const file = ev.target.files?.[0];
+  if(!file) return;
+  try{
+    const obj = JSON.parse(await file.text());
+    if(!obj?.data) throw new Error("Formato inválido.");
+    const d = obj.data;
+    state.products = Array.isArray(d.products) ? d.products : [];
+    state.productions = Array.isArray(d.productions) ? d.productions : [];
+    state.sales = Array.isArray(d.sales) ? d.sales : [];
+    state.breaks = Array.isArray(d.breaks) ? d.breaks : (Array.isArray(d.quebras) ? d.quebras : []);
+    saveState();
+    toast("Importado com sucesso.");
+    setTab("producao");
+  }catch(e){
+    alert("Falha ao importar: " + (e?.message || e));
+  }finally{ ev.target.value=""; }
+});
+$("#btnReset").addEventListener("click", ()=>{
+  if(!confirm("Tem certeza? Isso apaga TUDO (receitas, produção, vendas e quebras).")) return;
+  state = { products: [], productions: [], sales: [], breaks: [] };
+  saveState();
+  toast("Dados apagados.");
+  setTab("config");
+});
+
+/* Helpers saldo */
+function producedKgByProduct(){
+  const map = new Map();
+  for(const p of state.productions) map.set(p.productId, (map.get(p.productId)||0) + toNum(p.producedKg));
+  return map;
+}
+function soldKgByProduct(){
+  const map = new Map();
+  for(const s of state.sales) map.set(s.productId, (map.get(s.productId)||0) + toNum(s.soldKg));
+  return map;
+}
+function brokenKgByProduct(){
+  const map = new Map();
+  for(const b of (state.breaks||[])) map.set(b.productId, (map.get(b.productId)||0) + toNum(b.brokenKg));
+  return map;
+}
+function saldoKg(productId){
+  const prod = producedKgByProduct().get(productId)||0;
+  const sold = soldKgByProduct().get(productId)||0;
+  const broken = brokenKgByProduct().get(productId)||0;
+  return prod - sold - broken;
+}
+function productById(id){ return state.products.find(p=>p.id===id); }
+function calcStatusPill(productId){
+  const p = productById(productId);
+  if(!p) return { cls:"", text:"Selecione um produto" };
+  const s = saldoKg(productId);
+  const low = toNum(p.lowKg) || 0;
+  if(s <= 0) return { cls:"bad", text:"⚠️ ZEROU (produzir mais)" };
+  if(low>0 && s < low) return { cls:"warn", text:"🔶 Baixo (quase zerando)" };
+  return { cls:"ok", text:"✅ OK" };
+}
+
+/* Produção */
+const defaultSelectOption = `<option value="">Selecione…</option>`;
+let currentProductId = "";
+
+function renderProducao(){
+  const sel = $("#selProduto");
+  sel.innerHTML = defaultSelectOption + state.products.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
+  if(currentProductId && state.products.some(p=>p.id===currentProductId)) sel.value = currentProductId;
+
+  $("#prodCount").textContent = `${state.products.length} produto(s)`;
+  $("#emptyProd").style.display = state.products.length ? "none" : "";
+  renderProductCards();
+  updateCalc();
+}
+function renderProductCards(){
+  const q = ($("#searchProd").value||"").trim().toLowerCase();
+  const filter = $("#filterAlert").value;
+  const grid = $("#prodGrid");
+
+  let items = state.products.slice();
+  if(q){
+    items = items.filter(p=>{
+      const hay = `${p.name} ${p.scaleCode||""} ${p.recipeCode||""}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }
+  if(filter !== "all"){
+    items = items.filter(p=>{
+      const s = saldoKg(p.id);
+      const low = toNum(p.lowKg)||0;
+      if(filter==="need") return s <= 0;
+      if(filter==="low") return (s > 0 && low>0 && s < low);
+      return true;
+    });
+  }
+
+  grid.innerHTML = items.map(p=>{
+    const st = calcStatusPill(p.id);
+    const imgHtml = p.imageDataUrl
+      ? `<img src="${p.imageDataUrl}" alt="${escapeHtml(p.name)}">`
+      : `<span>${(p.name||"P").slice(0,1).toUpperCase()}</span>`;
+    let badgeTxt = "OK";
+    if(st.cls==="bad") badgeTxt = "Zerou";
+    else if(st.cls==="warn") badgeTxt = "Baixo";
+    return `
+      <div class="tile ${st.cls||""}" role="button" tabindex="0"
+           onclick="selectProduct('${p.id}')"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectProduct('${p.id}')}">
+        <div class="img">${imgHtml}</div>
+        <div class="overlay"></div>
+        <div class="badge-status">${st.cls==="bad" ? "⚠️" : st.cls==="warn" ? "🔶" : "✅"} ${badgeTxt}</div>
+        <div class="meta">
+          <div class="name" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div>
+          <div class="code">Cod. Balança <span class="mono">${escapeHtml(p.scaleCode||"-")}</span></div>
+          <div class="code">Estoque atual <span class="mono">${fmt(Math.max(0, saldoKg(p.id)),3)} kg</span>${(()=>{const upk=productUnitPerKg(p); const s=Math.max(0, saldoKg(p.id)); return upk?` <span class="muted">(${fmtInt(s*upk)} un)</span>`:"";})()}</div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  if(!items.length && state.products.length) grid.innerHTML = `<div class="notice muted">Nada encontrado com o filtro atual.</div>`;
+}
+window.selectProduct = (id)=>{
+  currentProductId = id;
+  $("#selProduto").value = id;
+  updateCalc();
+  toast("Produto selecionado.");
+};
+
+$("#searchProd").addEventListener("input", renderProductCards);
+$("#filterAlert").addEventListener("change", renderProductCards);
+$("#selProduto").addEventListener("change", ()=>{ currentProductId = $("#selProduto").value || ""; updateCalc(); });
+$("#inpQtdUn").addEventListener("input", updateCalc);
+
+function updateCalc(){
+  const pid = $("#selProduto").value || "";
+  const p = productById(pid);
+  const qtyUn = toNum($("#inpQtdUn").value);
+  const tb = $("#tblIngredientes tbody");
+  const info = $("#chipsInfo");
+  const alertBox = $("#alertBox");
+  const st = calcStatusPill(pid);
+  $("#calcStatus").textContent = st.text;
+
+  tb.innerHTML = "";
+  info.textContent = "";
+  alertBox.style.display = "none";
+
+  if(!p){
+    info.textContent = "Selecione um produto para calcular.";
+    tb.innerHTML = `<tr><td colspan="3" class="muted">—</td></tr>`;
+    return;
+  }
+  const baseKg = toNum(p.yieldKg);
+  const baseUn = toNum(p.yieldUnits);
+  if(baseKg<=0 || baseUn<=0){
+    info.textContent = "Erro: cadastre rendimento (KG e unidades).";
+    tb.innerHTML = `<tr><td colspan="3" class="muted">—</td></tr>`;
+    return;
+  }
+  if(qtyUn<=0){
+    info.innerHTML = `Rendimento base: <strong>${fmt(baseKg)} kg</strong> • <strong>${fmtInt(baseUn)} un</strong>. Digite a quantidade (unidades) para calcular.`;
+    tb.innerHTML = `<tr><td colspan="3" class="muted">Digite a quantidade para listar os ingredientes.</td></tr>`;
+    return;
+  }
+
+  const mult = qtyUn / baseUn;
+  const outKg = baseKg * mult;
+  info.innerHTML = `Qtd alvo: <strong>${fmtInt(qtyUn)} un</strong> • Produção estimada: <strong>${fmt(outKg)} kg</strong> • Proporção: <strong>x${mult.toFixed(4)}</strong>`;
+
+  const ings = Array.isArray(p.ingredients) ? p.ingredients : [];
+  if(!ings.length){
+    tb.innerHTML = `<tr><td colspan="3" class="muted">Sem ingredientes cadastrados.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = ings.map(i=>{
+    const q = toNum(i.qty) * mult;
+    const unit = i.unit || "—";
+    return `<tr><td>${escapeHtml(i.name)}</td><td class="right mono">${fmt(q)}</td><td class="nowrap">${escapeHtml(unit)}</td></tr>`;
+  }).join("");
+
+  const saldo = saldoKg(pid);
+  const low = toNum(p.lowKg)||0;
+  const alerts = [];
+  if(saldo<=0) alerts.push(`⚠️ <strong>Zerou</strong>: você já vendeu tudo o que foi produzido. Considere produzir mais.`);
+  else if(low>0 && saldo<low) alerts.push(`🔶 <strong>Baixo</strong>: saldo ${fmt(saldo)} kg abaixo do limite ${fmt(low)} kg.`);
+  if(alerts.length){
+    alertBox.innerHTML = alerts.join("<br>");
+    alertBox.style.display = "";
+  }
+}
+
+$("#btnImprimirReceita").addEventListener("click", ()=>{
+  const pid = $("#selProduto").value || "";
+  const p = productById(pid);
+  const qtyUn = toNum($("#inpQtdUn").value);
+  if(!p) return alert("Selecione um produto.");
+  if(qtyUn<=0) return alert("Informe a quantidade a produzir (unidades).");
+
+  const tblHtml = $("#tblIngredientes")?.outerHTML || "";
+  const dt = new Date().toLocaleString("pt-BR");
+  const recipeCode = p.recipeCode ? String(p.recipeCode) : "-";
+  const scaleCode = p.scaleCode ? String(p.scaleCode) : "-";
+  const statusTxt = $("#calcStatus")?.textContent || "";
+
+  const w = window.open("", "_blank");
+  if(!w) return alert("Pop-up bloqueado. Permita pop-ups para imprimir.");
+  w.document.open();
+  w.document.write(`<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<base href="${location.href}">
+<title>Receita - ${escapeHtml(p.name||"")}</title>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; margin:22px; color:#111;}
+  .top{display:flex; align-items:center; gap:14px; justify-content:space-between; border-bottom:2px solid #e5e7eb; padding-bottom:10px; margin-bottom:14px;}
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand img{height:28px; width:auto;}
+  h1{font-size:18px; margin:0;}
+  .meta{font-size:12px; color:#374151; line-height:1.4;}
+  .pill{display:inline-block; padding:4px 10px; border-radius:999px; border:1px solid #d1d5db; font-weight:700; font-size:12px;}
+  .grid{display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin:12px 0 14px;}
+  .box{border:1px solid #e5e7eb; border-radius:12px; padding:10px;}
+  .label{font-size:11px; color:#6b7280; margin-bottom:4px;}
+  .val{font-weight:800;}
+  table{width:100%; border-collapse:collapse; margin-top:10px;}
+  th,td{border:1px solid #e5e7eb; padding:8px; font-size:12px;}
+  th{background:#f9fafb; text-align:left;}
+  td.right, th.right{text-align:right;}
+  .nowrap{white-space:nowrap;}
+  @media print{ body{margin:14mm;} .noPrint{display:none !important;} }
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="brand">
+      <img src="./assets/delmoro-logo.png" alt="DelMORO" />
+      <div>
+        <h1>Receita / Produção</h1>
+        <div class="meta">${dt}</div>
+      </div>
+    </div>
+    <div class="pill">v2</div>
+  </div>
+
+  <div class="grid">
+    <div class="box"><div class="label">Produto</div><div class="val">${escapeHtml(p.name||"")}</div></div>
+    <div class="box"><div class="label">Qtd a produzir</div><div class="val">${fmtInt(qtyUn)} un</div></div>
+    <div class="box"><div class="label">Cod. Receita</div><div class="val">${escapeHtml(recipeCode)}</div></div>
+    <div class="box"><div class="label">Cod. Balança</div><div class="val">${escapeHtml(scaleCode)}</div></div>
+  </div>
+
+  <div class="box">
+    <div class="label">Resumo</div>
+    <div class="val">${escapeHtml(statusTxt)}</div>
+  </div>
+
+  <div class="box">
+    <div class="label">Ingredientes (ajustado pela quantidade)</div>
+    ${tblHtml}
+  </div>
+
+  <div class="noPrint" style="margin-top:14px; font-size:12px; color:#6b7280;">
+    Dica: use “Imprimir” e marque “Salvar como PDF” se quiser guardar.
+  </div>
+</body>
+</html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>{ try{ w.print(); }catch(e){} }, 250);
+});
+
+$("#btnRegistrarProducao").addEventListener("click", ()=>{
+  const pid = $("#selProduto").value || "";
+  const p = productById(pid);
+  const qtyUn = toNum($("#inpQtdUn").value);
+  if(!p) return alert("Selecione um produto.");
+  if(qtyUn<=0) return alert("Informe a quantidade em unidades para produzir.");
+  const baseKg = toNum(p.yieldKg), baseUn = toNum(p.yieldUnits);
+  if(baseKg<=0 || baseUn<=0) return alert("Produto sem rendimento válido (KG e unidades).");
+  const mult = qtyUn / baseUn;
+  const outKg = baseKg * mult;
+  state.productions.push({ id:uid(), date:nowISODate(), productId:pid, unitsTarget:Math.round(qtyUn), producedKg:outKg, createdAt:new Date().toISOString() });
+  saveState();
+  toast("Produção registrada.");
+  $("#inpQtdUn").value = "";
+  renderProducao();
+});
+
+/* Vendas */
+function productUnitPerKg(p){
+  const kg = toNum(p?.yieldKg), un = toNum(p?.yieldUnits);
+  if(kg<=0 || un<=0) return 0;
+  return un/kg;
+}
+function renderVendas(){
+  $("#saleDate").value = $("#saleDate").value || nowISODate();
+  $("#saleProduto").innerHTML = defaultSelectOption + state.products.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
+  if(state.products.length && !$("#saleProduto").value) $("#saleProduto").value = state.products[0].id;
+  $("#breakProduto").innerHTML = defaultSelectOption + state.products.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
+  if(state.products.length && !$("#breakProduto").value) $("#breakProduto").value = state.products[0].id;
+  renderEstoqueTable();
+  updateDaySummary();
+}
+function saleRecordsForDay(day){ return state.sales.filter(s=>s.date===day); }
+function breakRecordsForDay(day){ return (state.breaks||[]).filter(b=>b.date===day); }
+
+
+$("#btnAddSale").addEventListener("click", ()=>{
+  const date = $("#saleDate").value || nowISODate();
+  const pid = $("#saleProduto").value || "";
+  const p = productById(pid);
+  if(!p) return alert("Selecione um produto.");
+  const kgInput = toNum($("#saleKg").value);
+  const unitsInput = toNum($("#saleUnits").value);
+
+  let soldKg = 0, soldUnitsEq = 0;
+  if(kgInput>0){
+    soldKg = kgInput;
+    const upk = productUnitPerKg(p);
+    soldUnitsEq = upk ? (kgInput*upk) : 0;
+  }else{
+    if(unitsInput<=0) return alert("Informe unidades vendidas ou KG vendido.");
+    const kgPerUnit = toNum(p.yieldKg)/toNum(p.yieldUnits);
+    soldKg = unitsInput * kgPerUnit;
+    soldUnitsEq = unitsInput;
+  }
+
+  state.sales.push({ id:uid(), date, productId:pid, soldKg, soldUnitsEq, createdAt:new Date().toISOString() });
+  saveState();
+  toast("Venda adicionada.");
+  $("#saleUnits").value = ""; $("#saleKg").value = "";
+  renderVendas();
+  renderProducao();
+});
+
+$("#btnClearSales").addEventListener("click", ()=>{
+  const day = $("#saleDate").value || nowISODate();
+  const count = saleRecordsForDay(day).length;
+  if(!count) return toast("Nada para limpar.");
+  if(!confirm(`Remover ${count} venda(s) do dia ${day}?`)) return;
+  state.sales = state.sales.filter(s=>s.date!==day);
+  saveState();
+  toast("Vendas do dia removidas.");
+  renderVendas(); renderProducao();
+});
+
+$("#btnAddBreak").addEventListener("click", ()=>{
+  const date = $("#saleDate").value || nowISODate();
+  const pid = $("#breakProduto").value || "";
+  const p = productById(pid);
+  if(!p) return alert("Selecione um produto.");
+  const reason = ($("#breakReason").value||"").trim();
+  if(!reason) return alert("Selecione o motivo da quebra.");
+
+  const kgInput = toNum($("#breakKg").value);
+  const unitsInput = toNum($("#breakUnits").value);
+
+  let brokenKg = 0, brokenUnitsEq = 0;
+  if(kgInput>0){
+    brokenKg = kgInput;
+    const upk = productUnitPerKg(p);
+    brokenUnitsEq = upk ? (kgInput*upk) : 0;
+  }else{
+    if(unitsInput<=0) return alert("Informe unidades quebradas ou KG quebrado.");
+    const kgPerUnit = toNum(p.yieldKg)/toNum(p.yieldUnits);
+    brokenKg = unitsInput * kgPerUnit;
+    brokenUnitsEq = unitsInput;
+  }
+
+  state.breaks = state.breaks || [];
+  state.breaks.push({ id:uid(), date, productId:pid, reason, brokenKg, brokenUnitsEq, createdAt:new Date().toISOString() });
+  saveState();
+  toast("Quebra adicionada.");
+  $("#breakUnits").value = ""; $("#breakKg").value = ""; $("#breakReason").value = "";
+  renderVendas();
+  renderProducao();
+});
+
+$("#btnClearBreaks").addEventListener("click", ()=>{
+  const day = $("#saleDate").value || nowISODate();
+  const count = breakRecordsForDay(day).length;
+  if(!count) return toast("Nada para limpar.");
+  if(!confirm(`Remover ${count} quebra(s) do dia ${day}?`)) return;
+  state.breaks = (state.breaks||[]).filter(b=>b.date!==day);
+  saveState();
+  toast("Quebras do dia removidas.");
+  renderVendas(); renderProducao();
+});
+
+$("#saleDate").addEventListener("change", updateDaySummary);
+
+function renderEstoqueTable(){
+  const tb = $("#tblEstoque tbody");
+  const prodMade = producedKgByProduct();
+  const prodSold = soldKgByProduct();
+  const prodBroken = brokenKgByProduct();
+  if(!state.products.length){
+    tb.innerHTML = `<tr><td colspan="6" class="muted">Cadastre produtos em Config.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = state.products.map(p=>{
+    const made = prodMade.get(p.id)||0;
+    const sold = prodSold.get(p.id)||0;
+    const broken = prodBroken.get(p.id)||0;
+    const saldo = made - sold - broken;
+    const st = calcStatusPill(p.id);
+    const badge = st.cls==="bad" ? "⚠️ Zerou" : st.cls==="warn" ? "🔶 Baixo" : "✅ OK";
+    return `<tr>
+      <td>${escapeHtml(p.name)}</td>
+      <td class="right mono">${fmt(made)}</td>
+      <td class="right mono">${fmt(sold)}</td>
+      <td class="right mono">${fmt(broken)}</td>
+      <td class="right mono">${fmt(saldo)}</td>
+      <td class="nowrap">${badge}</td>
+    </tr>`;
+  }).join("");
+}
+function updateDaySummary(){
+  const day = $("#saleDate").value || nowISODate();
+  const recs = saleRecordsForDay(day);
+  const brecs = breakRecordsForDay(day);
+  const count = recs.length;
+  const bcount = brecs.length;
+  const units = recs.reduce((a,x)=>a+toNum(x.soldUnitsEq),0);
+  const bunits = brecs.reduce((a,x)=>a+toNum(x.brokenUnitsEq),0);
+  const kg = recs.reduce((a,x)=>a+toNum(x.soldKg),0);
+  const bkg = brecs.reduce((a,x)=>a+toNum(x.brokenKg),0);
+  let alerts=0;
+  for(const p of state.products){
+    const s = saldoKg(p.id);
+    const low = toNum(p.lowKg)||0;
+    if(s<=0 || (low>0 && s<low)) alerts++;
+  }
+  $("#kpiDay").innerHTML = `Vendas: <strong>${fmtInt(count)}</strong> • Unid. eq.: <strong>${fmtInt(units)}</strong> • KG eq.: <strong>${fmt(kg)}</strong><br>Quebras: <strong>${fmtInt(bcount)}</strong> • Unid. eq.: <strong>${fmtInt(bunits)}</strong> • KG eq.: <strong>${fmt(bkg)}</strong> • Alertas: <strong>${fmtInt(alerts)}</strong>`;
+}
+
+/* Histórico */
+function withinRangeISO(dateStr, days){
+  const d = new Date(dateStr+"T00:00:00");
+  const cutoff = new Date(); cutoff.setHours(0,0,0,0);
+  cutoff.setDate(cutoff.getDate() - (days-1));
+  return d >= cutoff;
+}
+function renderHistorico(){
+  $("#histProduto").innerHTML = `<option value="">Todos</option>` + state.products.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
+  refreshHistoryTables();
+}
+$("#btnRefreshHist").addEventListener("click", refreshHistoryTables);
+
+function refreshHistoryTables(){
+  const days = parseInt($("#histRange").value||"30",10);
+  const pid = $("#histProduto").value || "";
+
+  let prods = state.productions.filter(x=>withinRangeISO(x.date, days));
+  let sales = state.sales.filter(x=>withinRangeISO(x.date, days));
+  if(pid){ prods = prods.filter(x=>x.productId===pid); sales = sales.filter(x=>x.productId===pid); }
+
+  const tbP = $("#tblHistProd tbody");
+  const tbS = $("#tblHistSales tbody");
+
+  tbP.innerHTML = prods.sort((a,b)=>b.date.localeCompare(a.date)).map(x=>{
+    const p = productById(x.productId);
+    return `<tr><td class="nowrap">${escapeHtml(x.date)}</td><td>${escapeHtml(p?.name||"-")}</td><td class="right mono">${fmtInt(x.unitsTarget||0)}</td><td class="right mono">${fmt(x.producedKg||0)}</td></tr>`;
+  }).join("") || `<tr><td colspan="4" class="muted">Sem produções no período.</td></tr>`;
+
+  tbS.innerHTML = sales.sort((a,b)=>b.date.localeCompare(a.date)).map(x=>{
+    const p = productById(x.productId);
+    return `<tr><td class="nowrap">${escapeHtml(x.date)}</td><td>${escapeHtml(p?.name||"-")}</td><td class="right mono">${fmtInt(x.soldUnitsEq||0)}</td><td class="right mono">${fmt(x.soldKg||0)}</td></tr>`;
+  }).join("") || `<tr><td colspan="4" class="muted">Sem vendas no período.</td></tr>`;
+
+  // Quebras
+  let breaks = (state.breaks||[]).filter(x=>withinRangeISO(x.date, days));
+  if(pid) breaks = breaks.filter(x=>x.productId===pid);
+  breaks.sort((a,b)=> (a.date<b.date?1:-1));
+  $("#tblHistBreaks tbody").innerHTML = breaks.map(x=>{
+    const p = productById(x.productId);
+    return `<tr><td class="mono">${x.date}</td><td>${escapeHtml(p?.name||"-")}</td><td>${escapeHtml(x.reason||"-")}</td><td class="right mono">${fmtInt(x.brokenUnitsEq||0)}</td><td class="right mono">${fmt(x.brokenKg||0)}</td></tr>`;
+  }).join("") || `<tr><td colspan="5" class="muted">Sem quebras no período.</td></tr>`;
+}
+
+$("#btnExportCSV").addEventListener("click", ()=>{
+  const days = parseInt($("#histRange").value||"30",10);
+  const pid = $("#histProduto").value || "";
+  let prods = state.productions.filter(x=>withinRangeISO(x.date, days));
+  let sales = state.sales.filter(x=>withinRangeISO(x.date, days));
+  if(pid){ prods = prods.filter(x=>x.productId===pid); sales = sales.filter(x=>x.productId===pid); }
+  const lines = [];
+  lines.push(["tipo","data","produto","motivo","unidades_equiv","kg"].join(";"));
+  for(const x of prods){
+    const p = productById(x.productId);
+    lines.push(["producao", x.date, (p?.name||"-"), "", (x.unitsTarget||0), (toNum(x.producedKg)).toFixed(3)].join(";"));
+  }
+  for(const x of sales){
+    const p = productById(x.productId);
+    lines.push(["venda", x.date, (p?.name||"-"), "", (toNum(x.soldUnitsEq)).toFixed(0), (toNum(x.soldKg)).toFixed(3)].join(";"));
+  }
+  
+  let breaks = (state.breaks||[]).filter(x=>withinRangeISO(x.date, days));
+  if(pid) breaks = breaks.filter(x=>x.productId===pid);
+  for(const x of breaks){
+    const p = productById(x.productId);
+    lines.push(["quebra", x.date, (p?.name||"-"), (x.reason||""), (toNum(x.brokenUnitsEq)).toFixed(0), (toNum(x.brokenKg)).toFixed(3)].join(";"));
+  }
+const blob = new Blob([lines.join("\\n")], {type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `historico_${days}d_${nowISODate()}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+$("#btnClearHistory").addEventListener("click", ()=>{
+  if(!confirm("Apagar TODO o histórico de produções, vendas e quebras?")) return;
+  state.productions = []; state.sales = []; state.breaks = [];
+  saveState();
+  toast("Histórico apagado.");
+  renderHistorico(); renderProducao();
+});
+
+/* Config */
+let cfgIngredients = [];
+let editingProductId = null;
+let cfgImageDataUrl = null;
+
+function renderConfig(){
+  renderCfgProductsTable();
+  renderCfgIngredientTable();
+}
+function renderCfgProductsTable(){
+  const tb = $("#tblProdutos tbody");
+  if(!state.products.length){
+    tb.innerHTML = `<tr><td colspan="4" class="muted">Nenhum produto cadastrado.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = state.products.map(p=>`
+    <tr>
+      <td>${escapeHtml(p.name)}</td>
+      <td class="right mono">${fmt(p.yieldKg||0)}</td>
+      <td class="right mono">${fmtInt(p.yieldUnits||0)}</td>
+      <td class="right">
+        <button class="btn secondary" onclick="editProduto('${p.id}')">Editar</button>
+        <button class="btn danger" onclick="delProduto('${p.id}')">Excluir</button>
+      </td>
+    </tr>`).join("");
+}
+function addCfgIngRow(name="", qty="", unit="KG"){
+  cfgIngredients.push({ name, qty, unit });
+  renderCfgIngredientTable();
+}
+function renderCfgIngredientTable(){
+  const tb = $("#tblCfgIng tbody");
+  if(!cfgIngredients.length){
+    tb.innerHTML = `<tr><td colspan="4" class="muted">Clique em “+ Ingrediente” para adicionar.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = cfgIngredients.map((i,idx)=>`
+    <tr>
+      <td><input value="${escapeHtml(i.name)}" oninput="cfgIngChange(${idx}, 'name', this.value)" placeholder="Ex.: MP FARINHA TRIGO KG"></td>
+      <td class="right"><input type="number" step="0.001" value="${escapeHtml(i.qty)}" oninput="cfgIngChange(${idx}, 'qty', this.value)" placeholder="Ex.: 6.000"></td>
+      <td><input value="${escapeHtml(i.unit||"KG")}" oninput="cfgIngChange(${idx}, 'unit', this.value)" placeholder="KG / UN / L ..."></td>
+      <td class="right"><button class="btn danger" onclick="cfgIngDel(${idx})">Remover</button></td>
+    </tr>`).join("");
+}
+window.cfgIngChange = (idx, key, val)=>{ if(cfgIngredients[idx]) cfgIngredients[idx][key]=val; };
+window.cfgIngDel = (idx)=>{ cfgIngredients.splice(idx,1); renderCfgIngredientTable(); };
+
+$("#btnAddIng").addEventListener("click", ()=>addCfgIngRow());
+
+$("#cfgImg").addEventListener("change", async (ev)=>{
+  const f = ev.target.files?.[0];
+  if(!f) return;
+  cfgImageDataUrl = await fileToDataURL(f);
+  toast("Imagem carregada.");
+});
+function fileToDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=>resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+function clearCfgForm(){
+  editingProductId = null;
+  cfgImageDataUrl = null;
+  $("#cfgNome").value = "";
+  $("#cfgBalanca").value = "";
+  $("#cfgReceita").value = "";
+  $("#cfgRendKg").value = "";
+  $("#cfgRendUn").value = "";
+  $("#cfgLowKg").value = "";
+  $("#cfgImg").value = "";
+  cfgIngredients = [];
+  renderCfgIngredientTable();
+}
+
+$("#btnSaveProduto").addEventListener("click", ()=>{
+  const name = ($("#cfgNome").value||"").trim();
+  const scaleCode = ($("#cfgBalanca").value||"").trim();
+  const recipeCode = ($("#cfgReceita").value||"").trim();
+  const yieldKg = toNum($("#cfgRendKg").value);
+  const yieldUnits = toNum($("#cfgRendUn").value);
+  const lowKg = toNum($("#cfgLowKg").value);
+
+  if(!name) return alert("Informe o nome do produto.");
+  if(yieldKg<=0 || yieldUnits<=0) return alert("Informe rendimento em KG e em unidades (maior que zero).");
+
+  const ingredients = cfgIngredients
+    .map(x=>({ name:(x.name||"").trim(), qty: toNum(x.qty), unit:(x.unit||"").trim() }))
+    .filter(x=>x.name && x.qty>0);
+
+  const product = {
+    id: editingProductId || uid(),
+    name, scaleCode, recipeCode,
+    yieldKg, yieldUnits,
+    lowKg: lowKg || 0,
+    imageDataUrl: cfgImageDataUrl || (editingProductId ? productById(editingProductId)?.imageDataUrl : null),
+    ingredients,
+    updatedAt: new Date().toISOString(),
+  };
+
+  if(editingProductId){
+    const idx = state.products.findIndex(p=>p.id===editingProductId);
+    if(idx>=0) state.products[idx] = product;
+  }else{
+    state.products.push(product);
+  }
+  saveState();
+  toast(editingProductId ? "Produto atualizado." : "Produto cadastrado.");
+  clearCfgForm();
+  renderConfig(); renderProducao(); renderVendas(); renderHistorico();
+});
+
+window.editProduto = (id)=>{
+  const p = productById(id);
+  if(!p) return;
+  editingProductId = id;
+  cfgImageDataUrl = p.imageDataUrl || null;
+  $("#cfgNome").value = p.name || "";
+  $("#cfgBalanca").value = p.scaleCode || "";
+  $("#cfgReceita").value = p.recipeCode || "";
+  $("#cfgRendKg").value = p.yieldKg || "";
+  $("#cfgRendUn").value = p.yieldUnits || "";
+  $("#cfgLowKg").value = p.lowKg || "";
+  $("#cfgImg").value = "";
+  cfgIngredients = (p.ingredients||[]).map(x=>({name:x.name, qty:x.qty, unit:x.unit}));
+  renderCfgIngredientTable();
+  toast("Editando produto.");
+  setTab("config");
+};
+window.delProduto = (id)=>{
+  const p = productById(id);
+  if(!p) return;
+  if(!confirm(`Excluir "${p.name}"?`)) return;
+  state.products = state.products.filter(x=>x.id!==id);
+  saveState();
+  toast("Produto excluído.");
+  renderConfig(); renderProducao(); renderVendas(); renderHistorico();
+};
+
+$("#btnLoadExample").addEventListener("click", ()=>{
+  $("#cfgNome").value = "Pão Caseiro Kg";
+  $("#cfgBalanca").value = "5210";
+  $("#cfgReceita").value = "4753";
+  $("#cfgRendKg").value = "14.659";
+  $("#cfgRendUn").value = "21";
+  $("#cfgLowKg").value = "2.000";
+  cfgImageDataUrl = "./assets/pao-caseiro.png";
+  cfgIngredients = [
+    {name:"MP SAL REFINADO KG", qty:"0.120", unit:"KG"},
+    {name:"MP ACUCAR CRISTAL KG", qty:"1.150", unit:"KG"},
+    {name:"MP FARINHA TRIGO KG", qty:"6.000", unit:"KG"},
+    {name:"MP MISTURA PARA PÃO FRANCES", qty:"3.500", unit:"KG"},
+    {name:"MP BANHA SUINA", qty:"0.250", unit:"KG"},
+    {name:"MP FERMENTO P PAO KG", qty:"0.100", unit:"KG"},
+    {name:"MP LEITE EM PÓ", qty:"0.250", unit:"KG"},
+    {name:"MP OVO IN NATURA KG", qty:"10", unit:"KG"},
+    {name:"GELO", qty:"1.800", unit:"KG"},
+    {name:"ÁGUA", qty:"2.450", unit:"KG"},
+  ];
+  renderCfgIngredientTable();
+  toast("Exemplo carregado.");
+});
+
+/* init */
+(function init(){
+  $("#saleDate").value = nowISODate();
+  setTab("producao");
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  }
+})();
+</script>
+
+<!-- Firebase (auth + role gating) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  import { getDatabase, ref, get, set, onValue, off } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBx9h_4XbRygRAPUbtVlcLOYeCOFmMWP-Q",
+    authDomain: "producao-delmoro.firebaseapp.com",
+    projectId: "producao-delmoro",
+    storageBucket: "producao-delmoro.firebasestorage.app",
+    messagingSenderId: "533272045422",
+    appId: "1:533272045422:web:65e9fecdd77c9610a4c37f",
+    measurementId: "G-LX7NN4B5ED"
+  };
+  const RTDB_URL = "https://producao-delmoro-default-rtdb.firebaseio.com/";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app, RTDB_URL);
+// ---- RTDB Sync (salva/carrega o estado do app em /delmoro/state) ----
+const STATE_PATH = "delmoro/state";
+const STATE_REF = ref(db, STATE_PATH);
+
+// id do dispositivo (pra debug e para evitar confusão)
+const DEVICE_ID_KEY = "delmoro_device_id";
+let deviceId = "";
+try{
+  deviceId = localStorage.getItem(DEVICE_ID_KEY) || "";
+  if(!deviceId){
+    deviceId = (crypto?.randomUUID?.() || ("dev_"+Math.random().toString(36).slice(2)));
+    localStorage.setItem(DEVICE_ID_KEY, deviceId);
+  }
+}catch(e){ deviceId = "dev_"+Math.random().toString(36).slice(2); }
+
+let saveTimer = null;
+let unsub = null;
+
+function normalizeForSave(currentState){
+  const base = currentState || {};
+  return {
+    products: Array.isArray(base.products) ? base.products : [],
+    productions: Array.isArray(base.productions) ? base.productions : [],
+    sales: Array.isArray(base.sales) ? base.sales : [],
+    breaks: Array.isArray(base.breaks) ? base.breaks : [],
+    __meta: { updatedAt: Date.now(), updatedBy: deviceId }
+  };
+}
+
+async function hydrateOnce(){
+  try{
+    const snap = await get(STATE_REF);
+    if(snap.exists()){
+      window.__delmoroApp?.hydrateFromRemote?.(snap.val());
+    }
+  }catch(e){
+    // pode estar sem permissão ou offline
+  }
+}
+
+async function saveNow(currentState){
+  try{
+    await set(STATE_REF, normalizeForSave(currentState));
+  }catch(e){
+    // pode estar sem permissão ou offline
+  }
+}
+
+function scheduleSave(currentState){
+  try{ if(saveTimer) clearTimeout(saveTimer); }catch(e){}
+  saveTimer = setTimeout(()=>saveNow(currentState), 500);
+}
+
+function startRealtime(){
+  try{ if(unsub){ try{ unsub(); }catch(e){} unsub = null; } }catch(e){}
+  try{
+    unsub = onValue(STATE_REF, (snap)=>{
+      if(!snap.exists()) return;
+      window.__delmoroApp?.hydrateFromRemote?.(snap.val());
+    });
+  }catch(e){
+    // fallback: tenta ao menos uma vez
+    hydrateOnce();
+  }
+}
+
+function stopRealtime(){
+  try{ if(unsub){ try{ unsub(); }catch(e){} unsub = null; } }catch(e){}
+  try{ off(STATE_REF); }catch(e){}
+}
+
+// Disponibiliza para o script principal
+window.__delmoroSync = { scheduleSave, hydrateOnce, startRealtime, stopRealtime };
+
+
+// Tenta hidratar assim que o módulo carregar
+startRealtime();
+hydrateOnce();
+// PIN adicional para proteger o acesso admin no tablet
+  const ADMIN_PIN = "2203";
+
+  const $ = (s)=>document.querySelector(s);
+  const $$ = (s)=>Array.from(document.querySelectorAll(s));
+
+  function setUiMode(mode, userEmail=""){
+    const isAdmin = mode === "admin";
+
+    // Tabs
+    const allowedTabs = isAdmin ? ["producao","vendas","historico","config"] : ["producao"];
+    $$("nav .tab").forEach(t=>{
+      const ok = allowedTabs.includes(t.dataset.tab);
+      t.style.display = ok ? "" : "none";
+    });
+    ["producao","vendas","historico","config"].forEach(k=>{
+      const el = document.getElementById(`tab-${k}`);
+      if(!el) return;
+      if(isAdmin) return; // a navegação padrão controla
+      el.style.display = (k==="producao") ? "" : "none";
+    });
+
+    // Header actions
+    ["btnExport","fileImport","btnReset"].forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      // fileImport é input escondido dentro do label; esconder o label
+      if(id==="fileImport"){
+        const label = el.closest("label");
+        if(label) label.style.display = isAdmin ? "" : "none";
+      } else {
+        el.style.display = isAdmin ? "" : "none";
+      }
+    });
+
+    // Admin buttons
+    const loginBtn = $("#btnAdminLoginFooter");
+    const headerLogin = $("#btnAdminLogin");
+    if(headerLogin) headerLogin.style.display = "none";
+    const logoutBtn = $("#btnAdminLogout");
+    const badge = $("#adminBadge");
+    if(loginBtn) loginBtn.style.display = isAdmin ? "none" : "";
+    if(logoutBtn) logoutBtn.style.display = isAdmin ? "" : "none";
+    if(badge){
+      badge.style.display = isAdmin ? "" : "none";
+      badge.textContent = isAdmin ? `ADM${userEmail ? " • " + userEmail : ""}` : "";
+    }
+
+    // Mensagem de vazio na produção (sem convidar o operador a ir em Config)
+    const empty = $("#emptyProd");
+    if(empty && !isAdmin){
+      empty.innerHTML = "Nenhum produto cadastrado ainda. Peça ao <strong>admin</strong> para cadastrar os produtos.";
+    }
+
+    // Força permanecer em produção quando não-admin
+    if(!isAdmin){
+      const prodTab = document.querySelector('nav .tab[data-tab="producao"]');
+      if(prodTab) prodTab.click();
+    }
+  }
+
+  async function checkAdmin(uid){
+  try{
+    // Admin fixo por UID (não depende do banco)
+    const HARD_ADMINS = new Set(["1nKjRZ69WAVgEntQchWzi4nBj2G2"]);
+    if(HARD_ADMINS.has(uid)) return true;
+
+    // Regra opcional via banco: /admins/<uid> = true
+    const snap = await get(ref(db, `admins/${uid}`));
+    return snap.exists() && (snap.val() === true || snap.val() === 1 || snap.val() === "true");
+  } catch (e){
+    // Se falhar o banco, ainda assim o UID fixo acima mantém o admin funcionando
+    return false;
+  }
+}
+
+  // Modal controls
+  const modal = $("#adminModal");
+  const openModal = ()=>{ if(modal){ modal.setAttribute("aria-hidden","false"); } };
+  const closeModal = ()=>{ if(modal){ modal.setAttribute("aria-hidden","true"); } };
+  $("#btnAdminLoginFooter")?.addEventListener("click", openModal);
+  // mantém o botão do header oculto
+  $("#btnAdminLogin")?.addEventListener("click", openModal);
+  $("#btnAdminClose")?.addEventListener("click", closeModal);
+  modal?.addEventListener("click", (e)=>{
+    const t = e.target;
+    if(t && t.getAttribute && t.getAttribute("data-close") === "1") closeModal();
+  });
+
+  // Login
+  $("#btnAdminDoLogin")?.addEventListener("click", async ()=>{
+    const email = ($("#adminEmail")?.value || "").trim();
+    const pass = $("#adminPass")?.value || "";
+    const pin  = ($("#adminPin")?.value || "").trim();
+    const status = $("#adminStatus");
+
+    if(pin !== ADMIN_PIN){
+      if(status) status.textContent = "PIN incorreto.";
+      return;
+    }
+
+    if(status) status.textContent = "Entrando...";
+    try{
+      const cred = await signInWithEmailAndPassword(auth, email, pass);
+      const isAdmin = await checkAdmin(cred.user.uid);
+      if(!isAdmin){
+        await signOut(auth);
+        if(status) status.textContent = "Este usuário não é admin.";
+        return;
+      }
+      if(status) status.textContent = "OK.";
+      closeModal();
+    } catch (e){
+      if(status) status.textContent = "Falha no login. Verifique email e senha.";
+    }
+  });
+
+  // Logout
+  $("#btnAdminLogout")?.addEventListener("click", async ()=>{
+    await signOut(auth);
+  });
+
+  // Auth watcher
+  onAuthStateChanged(auth, async (user)=>{
+    if(!user){
+      setUiMode("prod");
+      return;
+    }
+    const isAdmin = await checkAdmin(user.uid);
+    if(isAdmin){
+      setUiMode("admin", user.email || "");
+    } else {
+      await signOut(auth);
+      setUiMode("prod");
+    }
+  });
+
+  // Default: produção até autenticar
+  setUiMode("prod");
+</script>
+</body>
+</html>
