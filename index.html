@@ -330,7 +330,7 @@
               <select id="selProduto"></select>
             </div>
             <div>
-              <label>Qtd. a produzir (unidades)</label>
+              <label>Qtd. a produzir kg </label>
               <input id="inpQtdUn" type="number" min="0" step="1" placeholder="Ex.: 55" />
             </div>
           </div>
@@ -342,7 +342,7 @@
           <div class="row" style="align-items:center">
             <div style="flex:2; min-width:240px">
               <div class="muted">Ingredientes (ajustado pela quantidade)</div>
-              <div class="small">Base: rendimento cadastrado (KG e unidades) → cálculo por proporcionalidade.</div>
+              <div class="small">Base: rendimento cadastrado → cálculo por proporcionalidade.</div>
             </div>
             <div class="row" style="gap:8px; justify-content:flex-end">
               <button class="btn secondary" id="btnImprimirReceita" style="min-width:190px">Imprimir receita</button>
@@ -392,7 +392,7 @@
 <div class="sectionTitle">Registrar quebras do dia <span class="muted" style="font-weight:700">(desconta do estoque)</span></div>
 <div class="row">
   <div style="flex:2; min-width:240px"><label>Produto</label><select id="breakProduto"></select></div>
-  <div><label>Qtd quebrada (unidades)</label><input id="breakUnits" type="number" min="0" step="1" placeholder="Ex.: 5" /></div>
+  <div><label>Qtd quebrada</label><input id="breakUnits" type="number" min="0" step="1" placeholder="Ex.: 5" /></div>
 </div>
 <div class="row" style="margin-top:10px">
   <div>
@@ -516,7 +516,7 @@
 
           <div class="row" style="margin-top:10px">
             <div><label>Rendimento (KG)</label><input id="cfgRendKg" type="number" step="0.001" placeholder="Ex.: 14.659" /></div>
-            <div><label>Rendimento (Unidades)</label><input id="cfgRendUn" type="number" step="1" placeholder="Ex.: 21" /></div>
+            <div><label>Rendimento final </label><input id="cfgRendUn" type="number" step="1" placeholder="Ex.: 21" /></div>
             <div><label>Baixo estoque (KG)</label><input id="cfgLowKg" type="number" step="0.001" placeholder="Ex.: 2.000" /></div>
           </div>
 
