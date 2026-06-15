@@ -330,8 +330,8 @@
               <select id="selProduto"></select>
             </div>
             <div>
-              <label>Qtd. a produzir kg </label>
-              <input id="inpQtdUn" type="number" min="0" step="1" placeholder="Ex.: 55" />
+              <label>Qtd. a produzir (KG)</label>
+              <input id="inpQtdUn" type="number" min="0" step="0.001" placeholder="Ex.: 55.5" />
             </div>
           </div>
           <div class="hr"></div>
@@ -372,15 +372,10 @@
           <div class="row">
             <div><label>Data</label><input id="saleDate" type="date" /></div>
             <div style="flex:2; min-width:240px"><label>Produto</label><select id="saleProduto"></select></div>
-            <div><label>Qtd vendida (unidades)</label><input id="saleUnits" type="number" min="0" step="1" placeholder="Ex.: 40" /></div>
+            <div><label>Qtd vendida (KG)</label><input id="saleUnits" type="number" min="0" step="0.001" placeholder="Ex.: 8.200" /></div>
           </div>
           <div class="row" style="margin-top:10px">
-            <div>
-              <label class="muted">Ou (opcional) vender em KG</label>
-              <input id="saleKg" type="number" min="0" step="0.001" placeholder="Ex.: 8.200" />
-              <div class="small">Se você preencher KG, ele ignora unidades.</div>
-            </div>
-            <div style="display:flex; align-items:flex-end; gap:10px; min-width:260px;">
+            <div style="display:flex; align-items:flex-end; gap:10px; width:100%;">
               <button class="btn" id="btnAddSale" style="flex:1">Adicionar venda</button>
               <button class="btn secondary" id="btnClearSales" style="flex:1">Limpar dia</button>
             </div>
@@ -388,36 +383,29 @@
           <div class="hr"></div>
           <div class="notice muted" id="kpiDay"></div>
 
-<div class="hr"></div>
-<div class="sectionTitle">Registrar quebras do dia <span class="muted" style="font-weight:700">(desconta do estoque)</span></div>
-<div class="row">
-  <div style="flex:2; min-width:240px"><label>Produto</label><select id="breakProduto"></select></div>
-  <div><label>Qtd quebrada</label><input id="breakUnits" type="number" min="0" step="1" placeholder="Ex.: 5" /></div>
-</div>
-<div class="row" style="margin-top:10px">
-  <div>
-    <label class="muted">Ou (opcional) quebrar em KG</label>
-    <input id="breakKg" type="number" min="0" step="0.001" placeholder="Ex.: 1.250" />
-    <div class="small">Se você preencher KG, ele ignora unidades.</div>
-  </div>
-  <div>
-    <label>Motivo</label>
-    <select id="breakReason">
-      <option value="">Selecione…</option>
-      <option value="Vencimento">Vencimento</option>
-      <option value="Avaria">Avaria</option>
-      <option value="Erro na Produção">Erro na Produção</option>
-    </select>
-  </div>
-  <div style="display:flex; align-items:flex-end; gap:10px; min-width:260px;">
-    <button class="btn" id="btnAddBreak" style="flex:1">Adicionar quebra</button>
-    <button class="btn secondary" id="btnClearBreaks" style="flex:1">Limpar dia</button>
-  </div>
-</div>
+          <div class="hr"></div>
+          <div class="sectionTitle">Registrar quebras do dia <span class="muted" style="font-weight:700">(desconta do estoque)</span></div>
+          <div class="row">
+            <div style="flex:2; min-width:240px"><label>Produto</label><select id="breakProduto"></select></div>
+            <div><label>Qtd quebrada (KG)</label><input id="breakUnits" type="number" min="0" step="0.001" placeholder="Ex.: 1.250" /></div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div style="flex:2">
+              <label>Motivo</label>
+              <select id="breakReason">
+                <option value="">Selecione…</option>
+                <option value="Vencimento">Vencimento</option>
+                <option value="Avaria">Avaria</option>
+                <option value="Erro na Produção">Erro na Produção</option>
+              </select>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:10px; min-width:260px;">
+              <button class="btn" id="btnAddBreak" style="flex:1">Adicionar quebra</button>
+              <button class="btn secondary" id="btnClearBreaks" style="flex:1">Limpar dia</button>
+            </div>
+          </div>
         </div>
       </div>
-
-          
 
       <div class="card">
         <div class="hd"><h2>Estoque (Produção × Vendas × Quebras)</h2><span class="muted">estimativa</span></div>
@@ -458,7 +446,6 @@
             <div style="display:flex; align-items:flex-end; gap:10px">
               <button class="btn secondary" id="btnRefreshHist" style="min-width:180px">Atualizar</button>
               <button class="btn warn" id="btnExportCSV" style="min-width:180px">Exportar CSV</button>
-              <button class="btn secondary" id="btnExportBreaksCSV" style="min-width:180px">Exportar Quebras</button>
             </div>
           </div>
 
@@ -468,7 +455,7 @@
               <div class="muted">Produções</div>
               <div style="overflow:auto; margin-top:8px">
                 <table class="table" id="tblHistProd">
-                  <thead><tr><th>Data</th><th>Produto</th><th class="right">Unid.</th><th class="right">KG</th></tr></thead>
+                  <thead><tr><th>Data</th><th>Produto</th><th class="right">KG</th></tr></thead>
                   <tbody></tbody>
                 </table>
               </div>
@@ -477,7 +464,7 @@
               <div class="muted">Vendas</div>
               <div style="overflow:auto; margin-top:8px">
                 <table class="table" id="tblHistSales">
-                  <thead><tr><th>Data</th><th>Produto</th><th class="right">Unid. eq.</th><th class="right">KG</th></tr></thead>
+                  <thead><tr><th>Data</th><th>Produto</th><th class="right">KG</th></tr></thead>
                   <tbody></tbody>
                 </table>
               </div>
@@ -490,7 +477,7 @@
             <div class="muted">Quebras</div>
             <div style="overflow:auto; margin-top:8px">
               <table class="table" id="tblHistBreaks">
-                <thead><tr><th>Data</th><th>Produto</th><th>Motivo</th><th class="right">Unid. eq.</th><th class="right">KG</th></tr></thead>
+                <thead><tr><th>Data</th><th>Produto</th><th>Motivo</th><th class="right">KG</th></tr></thead>
                 <tbody></tbody>
               </table>
             </div>
@@ -515,16 +502,20 @@
           </div>
 
           <div class="row" style="margin-top:10px">
-            <div><label>Rendimento (KG)</label><input id="cfgRendKg" type="number" step="0.001" placeholder="Ex.: 14.659" /></div>
-            <div><label>Rendimento final </label><input id="cfgRendUn" type="number" step="1" placeholder="Ex.: 21" /></div>
+            <div><label>Rendimento massa crua (KG)</label><input id="cfgRendKg" type="number" step="0.001" placeholder="Ex.: 14.659" /></div>
+            <div><label>Rendimento final (KG)</label><input id="cfgRendUn" type="number" step="0.001" placeholder="Ex.: 12.500" /></div>
             <div><label>Baixo estoque (KG)</label><input id="cfgLowKg" type="number" step="0.001" placeholder="Ex.: 2.000" /></div>
           </div>
 
           <div class="row" style="margin-top:10px">
-            <div>
-              <label>Imagem do produto (opcional)</label>
+            <div style="flex:1">
+              <label>Imagem (Arquivo local)</label>
               <input id="cfgImg" type="file" accept="image/*" />
               <div class="small">Teste: salva no aparelho (localStorage).</div>
+            </div>
+            <div style="flex:1">
+              <label>Ou Link da Imagem (URL)</label>
+              <input id="cfgImgUrl" type="url" placeholder="https://site.com/imagem.png" />
             </div>
           </div>
 
@@ -554,7 +545,7 @@
         <div class="bd">
           <div class="tableWrap">
             <table class="table" id="tblProdutos">
-              <thead><tr><th>Produto</th><th class="right">KG</th><th class="right">Unid</th><th class="right">—</th></tr></thead>
+              <thead><tr><th>Produto</th><th class="right">Rend. Cru (KG)</th><th class="right">Rend. Final (KG)</th><th class="right">—</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
@@ -568,7 +559,6 @@
   </section>
 </main>
 
-<!-- Admin login modal -->
 <div class="modal" id="adminModal" aria-hidden="true">
   <div class="modalBackdrop" data-close="1"></div>
   <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
@@ -830,7 +820,7 @@ function renderProductCards(){
         <div class="meta">
           <div class="name" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div>
           <div class="code">Cod. Balança <span class="mono">${escapeHtml(p.scaleCode||"-")}</span></div>
-          <div class="code">Estoque atual <span class="mono">${fmt(Math.max(0, saldoKg(p.id)),3)} kg</span>${(()=>{const upk=productUnitPerKg(p); const s=Math.max(0, saldoKg(p.id)); return upk?` <span class="muted">(${fmtInt(s*upk)} un)</span>`:"";})()}</div>
+          <div class="code">Estoque atual <span class="mono">${fmt(Math.max(0, saldoKg(p.id)),3)} kg</span></div>
         </div>
       </div>
     `;
@@ -853,7 +843,7 @@ $("#inpQtdUn").addEventListener("input", updateCalc);
 function updateCalc(){
   const pid = $("#selProduto").value || "";
   const p = productById(pid);
-  const qtyUn = toNum($("#inpQtdUn").value);
+  const qtyKg = toNum($("#inpQtdUn").value);
   const tb = $("#tblIngredientes tbody");
   const info = $("#chipsInfo");
   const alertBox = $("#alertBox");
@@ -869,22 +859,22 @@ function updateCalc(){
     tb.innerHTML = `<tr><td colspan="3" class="muted">—</td></tr>`;
     return;
   }
-  const baseKg = toNum(p.yieldKg);
-  const baseUn = toNum(p.yieldUnits);
-  if(baseKg<=0 || baseUn<=0){
-    info.textContent = "Erro: cadastre rendimento (KG e unidades).";
+  const baseRawKg = toNum(p.yieldKg);
+  const baseFinalKg = toNum(p.yieldUnits);
+  if(baseRawKg<=0 || baseFinalKg<=0){
+    info.textContent = "Erro: cadastre rendimento (Massa crua e Final em KG).";
     tb.innerHTML = `<tr><td colspan="3" class="muted">—</td></tr>`;
     return;
   }
-  if(qtyUn<=0){
-    info.innerHTML = `Rendimento base: <strong>${fmt(baseKg)} kg</strong> • <strong>${fmtInt(baseUn)} un</strong>. Digite a quantidade (unidades) para calcular.`;
+  if(qtyKg<=0){
+    info.innerHTML = `Rendimento base: <strong>${fmt(baseRawKg)} kg</strong> (Crua) • <strong>${fmt(baseFinalKg)} kg</strong> (Final). Digite a quantidade (KG) a produzir.`;
     tb.innerHTML = `<tr><td colspan="3" class="muted">Digite a quantidade para listar os ingredientes.</td></tr>`;
     return;
   }
 
-  const mult = qtyUn / baseUn;
-  const outKg = baseKg * mult;
-  info.innerHTML = `Qtd alvo: <strong>${fmtInt(qtyUn)} un</strong> • Produção estimada: <strong>${fmt(outKg)} kg</strong> • Proporção: <strong>x${mult.toFixed(4)}</strong>`;
+  const mult = qtyKg / baseFinalKg;
+  const outRawKg = baseRawKg * mult;
+  info.innerHTML = `Qtd alvo: <strong>${fmt(qtyKg)} kg</strong> (Final) • Massa crua total: <strong>${fmt(outRawKg)} kg</strong> • Proporção: <strong>x${mult.toFixed(4)}</strong>`;
 
   const ings = Array.isArray(p.ingredients) ? p.ingredients : [];
   if(!ings.length){
@@ -911,9 +901,9 @@ function updateCalc(){
 $("#btnImprimirReceita").addEventListener("click", ()=>{
   const pid = $("#selProduto").value || "";
   const p = productById(pid);
-  const qtyUn = toNum($("#inpQtdUn").value);
+  const qtyKg = toNum($("#inpQtdUn").value);
   if(!p) return alert("Selecione um produto.");
-  if(qtyUn<=0) return alert("Informe a quantidade a produzir (unidades).");
+  if(qtyKg<=0) return alert("Informe a quantidade a produzir (KG).");
 
   const tblHtml = $("#tblIngredientes")?.outerHTML || "";
   const dt = new Date().toLocaleString("pt-BR");
@@ -965,7 +955,7 @@ $("#btnImprimirReceita").addEventListener("click", ()=>{
 
   <div class="grid">
     <div class="box"><div class="label">Produto</div><div class="val">${escapeHtml(p.name||"")}</div></div>
-    <div class="box"><div class="label">Qtd a produzir</div><div class="val">${fmtInt(qtyUn)} un</div></div>
+    <div class="box"><div class="label">Qtd a produzir</div><div class="val">${fmt(qtyKg)} kg</div></div>
     <div class="box"><div class="label">Cod. Receita</div><div class="val">${escapeHtml(recipeCode)}</div></div>
     <div class="box"><div class="label">Cod. Balança</div><div class="val">${escapeHtml(scaleCode)}</div></div>
   </div>
@@ -993,14 +983,13 @@ $("#btnImprimirReceita").addEventListener("click", ()=>{
 $("#btnRegistrarProducao").addEventListener("click", ()=>{
   const pid = $("#selProduto").value || "";
   const p = productById(pid);
-  const qtyUn = toNum($("#inpQtdUn").value);
+  const qtyKg = toNum($("#inpQtdUn").value);
   if(!p) return alert("Selecione um produto.");
-  if(qtyUn<=0) return alert("Informe a quantidade em unidades para produzir.");
-  const baseKg = toNum(p.yieldKg), baseUn = toNum(p.yieldUnits);
-  if(baseKg<=0 || baseUn<=0) return alert("Produto sem rendimento válido (KG e unidades).");
-  const mult = qtyUn / baseUn;
-  const outKg = baseKg * mult;
-  state.productions.push({ id:uid(), date:nowISODate(), productId:pid, unitsTarget:Math.round(qtyUn), producedKg:outKg, createdAt:new Date().toISOString() });
+  if(qtyKg<=0) return alert("Informe a quantidade em KG para produzir.");
+  const baseRawKg = toNum(p.yieldKg), baseFinalKg = toNum(p.yieldUnits);
+  if(baseRawKg<=0 || baseFinalKg<=0) return alert("Produto sem rendimento válido (KG).");
+
+  state.productions.push({ id:uid(), date:nowISODate(), productId:pid, producedKg:qtyKg, createdAt:new Date().toISOString() });
   saveState();
   toast("Produção registrada.");
   $("#inpQtdUn").value = "";
@@ -1008,11 +997,6 @@ $("#btnRegistrarProducao").addEventListener("click", ()=>{
 });
 
 /* Vendas */
-function productUnitPerKg(p){
-  const kg = toNum(p?.yieldKg), un = toNum(p?.yieldUnits);
-  if(kg<=0 || un<=0) return 0;
-  return un/kg;
-}
 function renderVendas(){
   $("#saleDate").value = $("#saleDate").value || nowISODate();
   $("#saleProduto").innerHTML = defaultSelectOption + state.products.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
@@ -1031,25 +1015,13 @@ $("#btnAddSale").addEventListener("click", ()=>{
   const pid = $("#saleProduto").value || "";
   const p = productById(pid);
   if(!p) return alert("Selecione um produto.");
-  const kgInput = toNum($("#saleKg").value);
-  const unitsInput = toNum($("#saleUnits").value);
+  const soldKg = toNum($("#saleUnits").value);
+  if(soldKg<=0) return alert("Informe a quantidade vendida em KG.");
 
-  let soldKg = 0, soldUnitsEq = 0;
-  if(kgInput>0){
-    soldKg = kgInput;
-    const upk = productUnitPerKg(p);
-    soldUnitsEq = upk ? (kgInput*upk) : 0;
-  }else{
-    if(unitsInput<=0) return alert("Informe unidades vendidas ou KG vendido.");
-    const kgPerUnit = toNum(p.yieldKg)/toNum(p.yieldUnits);
-    soldKg = unitsInput * kgPerUnit;
-    soldUnitsEq = unitsInput;
-  }
-
-  state.sales.push({ id:uid(), date, productId:pid, soldKg, soldUnitsEq, createdAt:new Date().toISOString() });
+  state.sales.push({ id:uid(), date, productId:pid, soldKg, createdAt:new Date().toISOString() });
   saveState();
   toast("Venda adicionada.");
-  $("#saleUnits").value = ""; $("#saleKg").value = "";
+  $("#saleUnits").value = "";
   renderVendas();
   renderProducao();
 });
@@ -1073,26 +1045,14 @@ $("#btnAddBreak").addEventListener("click", ()=>{
   const reason = ($("#breakReason").value||"").trim();
   if(!reason) return alert("Selecione o motivo da quebra.");
 
-  const kgInput = toNum($("#breakKg").value);
-  const unitsInput = toNum($("#breakUnits").value);
-
-  let brokenKg = 0, brokenUnitsEq = 0;
-  if(kgInput>0){
-    brokenKg = kgInput;
-    const upk = productUnitPerKg(p);
-    brokenUnitsEq = upk ? (kgInput*upk) : 0;
-  }else{
-    if(unitsInput<=0) return alert("Informe unidades quebradas ou KG quebrado.");
-    const kgPerUnit = toNum(p.yieldKg)/toNum(p.yieldUnits);
-    brokenKg = unitsInput * kgPerUnit;
-    brokenUnitsEq = unitsInput;
-  }
+  const brokenKg = toNum($("#breakUnits").value);
+  if(brokenKg<=0) return alert("Informe a quantidade quebrada em KG.");
 
   state.breaks = state.breaks || [];
-  state.breaks.push({ id:uid(), date, productId:pid, reason, brokenKg, brokenUnitsEq, createdAt:new Date().toISOString() });
+  state.breaks.push({ id:uid(), date, productId:pid, reason, brokenKg, createdAt:new Date().toISOString() });
   saveState();
   toast("Quebra adicionada.");
-  $("#breakUnits").value = ""; $("#breakKg").value = ""; $("#breakReason").value = "";
+  $("#breakUnits").value = ""; $("#breakReason").value = "";
   renderVendas();
   renderProducao();
 });
@@ -1142,8 +1102,6 @@ function updateDaySummary(){
   const brecs = breakRecordsForDay(day);
   const count = recs.length;
   const bcount = brecs.length;
-  const units = recs.reduce((a,x)=>a+toNum(x.soldUnitsEq),0);
-  const bunits = brecs.reduce((a,x)=>a+toNum(x.brokenUnitsEq),0);
   const kg = recs.reduce((a,x)=>a+toNum(x.soldKg),0);
   const bkg = brecs.reduce((a,x)=>a+toNum(x.brokenKg),0);
   let alerts=0;
@@ -1152,7 +1110,7 @@ function updateDaySummary(){
     const low = toNum(p.lowKg)||0;
     if(s<=0 || (low>0 && s<low)) alerts++;
   }
-  $("#kpiDay").innerHTML = `Vendas: <strong>${fmtInt(count)}</strong> • Unid. eq.: <strong>${fmtInt(units)}</strong> • KG eq.: <strong>${fmt(kg)}</strong><br>Quebras: <strong>${fmtInt(bcount)}</strong> • Unid. eq.: <strong>${fmtInt(bunits)}</strong> • KG eq.: <strong>${fmt(bkg)}</strong> • Alertas: <strong>${fmtInt(alerts)}</strong>`;
+  $("#kpiDay").innerHTML = `Vendas: <strong>${fmtInt(count)}</strong> • Total: <strong>${fmt(kg)} KG</strong><br>Quebras: <strong>${fmtInt(bcount)}</strong> • Total: <strong>${fmt(bkg)} KG</strong> • Alertas: <strong>${fmtInt(alerts)}</strong>`;
 }
 
 /* Histórico */
@@ -1181,13 +1139,13 @@ function refreshHistoryTables(){
 
   tbP.innerHTML = prods.sort((a,b)=>b.date.localeCompare(a.date)).map(x=>{
     const p = productById(x.productId);
-    return `<tr><td class="nowrap">${escapeHtml(x.date)}</td><td>${escapeHtml(p?.name||"-")}</td><td class="right mono">${fmtInt(x.unitsTarget||0)}</td><td class="right mono">${fmt(x.producedKg||0)}</td></tr>`;
-  }).join("") || `<tr><td colspan="4" class="muted">Sem produções no período.</td></tr>`;
+    return `<tr><td class="nowrap">${escapeHtml(x.date)}</td><td>${escapeHtml(p?.name||"-")}</td><td class="right mono">${fmt(x.producedKg||0)}</td></tr>`;
+  }).join("") || `<tr><td colspan="3" class="muted">Sem produções no período.</td></tr>`;
 
   tbS.innerHTML = sales.sort((a,b)=>b.date.localeCompare(a.date)).map(x=>{
     const p = productById(x.productId);
-    return `<tr><td class="nowrap">${escapeHtml(x.date)}</td><td>${escapeHtml(p?.name||"-")}</td><td class="right mono">${fmtInt(x.soldUnitsEq||0)}</td><td class="right mono">${fmt(x.soldKg||0)}</td></tr>`;
-  }).join("") || `<tr><td colspan="4" class="muted">Sem vendas no período.</td></tr>`;
+    return `<tr><td class="nowrap">${escapeHtml(x.date)}</td><td>${escapeHtml(p?.name||"-")}</td><td class="right mono">${fmt(x.soldKg||0)}</td></tr>`;
+  }).join("") || `<tr><td colspan="3" class="muted">Sem vendas no período.</td></tr>`;
 
   // Quebras
   let breaks = (state.breaks||[]).filter(x=>withinRangeISO(x.date, days));
@@ -1195,8 +1153,8 @@ function refreshHistoryTables(){
   breaks.sort((a,b)=> (a.date<b.date?1:-1));
   $("#tblHistBreaks tbody").innerHTML = breaks.map(x=>{
     const p = productById(x.productId);
-    return `<tr><td class="mono">${x.date}</td><td>${escapeHtml(p?.name||"-")}</td><td>${escapeHtml(x.reason||"-")}</td><td class="right mono">${fmtInt(x.brokenUnitsEq||0)}</td><td class="right mono">${fmt(x.brokenKg||0)}</td></tr>`;
-  }).join("") || `<tr><td colspan="5" class="muted">Sem quebras no período.</td></tr>`;
+    return `<tr><td class="mono">${x.date}</td><td>${escapeHtml(p?.name||"-")}</td><td>${escapeHtml(x.reason||"-")}</td><td class="right mono">${fmt(x.brokenKg||0)}</td></tr>`;
+  }).join("") || `<tr><td colspan="4" class="muted">Sem quebras no período.</td></tr>`;
 }
 
 $("#btnExportCSV").addEventListener("click", ()=>{
@@ -1206,23 +1164,23 @@ $("#btnExportCSV").addEventListener("click", ()=>{
   let sales = state.sales.filter(x=>withinRangeISO(x.date, days));
   if(pid){ prods = prods.filter(x=>x.productId===pid); sales = sales.filter(x=>x.productId===pid); }
   const lines = [];
-  lines.push(["tipo","data","produto","motivo","unidades_equiv","kg"].join(";"));
+  lines.push(["tipo","data","produto","motivo","kg"].join(";"));
   for(const x of prods){
     const p = productById(x.productId);
-    lines.push(["producao", x.date, (p?.name||"-"), "", (x.unitsTarget||0), (toNum(x.producedKg)).toFixed(3)].join(";"));
+    lines.push(["producao", x.date, (p?.name||"-"), "", (toNum(x.producedKg)).toFixed(3)].join(";"));
   }
   for(const x of sales){
     const p = productById(x.productId);
-    lines.push(["venda", x.date, (p?.name||"-"), "", (toNum(x.soldUnitsEq)).toFixed(0), (toNum(x.soldKg)).toFixed(3)].join(";"));
+    lines.push(["venda", x.date, (p?.name||"-"), "", (toNum(x.soldKg)).toFixed(3)].join(";"));
   }
   
   let breaks = (state.breaks||[]).filter(x=>withinRangeISO(x.date, days));
   if(pid) breaks = breaks.filter(x=>x.productId===pid);
   for(const x of breaks){
     const p = productById(x.productId);
-    lines.push(["quebra", x.date, (p?.name||"-"), (x.reason||""), (toNum(x.brokenUnitsEq)).toFixed(0), (toNum(x.brokenKg)).toFixed(3)].join(";"));
+    lines.push(["quebra", x.date, (p?.name||"-"), (x.reason||""), (toNum(x.brokenKg)).toFixed(3)].join(";"));
   }
-const blob = new Blob([lines.join("\\n")], {type:"text/csv;charset=utf-8"});
+const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = `historico_${days}d_${nowISODate()}.csv`;
@@ -1257,7 +1215,7 @@ function renderCfgProductsTable(){
     <tr>
       <td>${escapeHtml(p.name)}</td>
       <td class="right mono">${fmt(p.yieldKg||0)}</td>
-      <td class="right mono">${fmtInt(p.yieldUnits||0)}</td>
+      <td class="right mono">${fmt(p.yieldUnits||0)}</td>
       <td class="right">
         <button class="btn secondary" onclick="editProduto('${p.id}')">Editar</button>
         <button class="btn danger" onclick="delProduto('${p.id}')">Excluir</button>
@@ -1311,6 +1269,7 @@ function clearCfgForm(){
   $("#cfgRendUn").value = "";
   $("#cfgLowKg").value = "";
   $("#cfgImg").value = "";
+  $("#cfgImgUrl").value = "";
   cfgIngredients = [];
   renderCfgIngredientTable();
 }
@@ -1324,18 +1283,21 @@ $("#btnSaveProduto").addEventListener("click", ()=>{
   const lowKg = toNum($("#cfgLowKg").value);
 
   if(!name) return alert("Informe o nome do produto.");
-  if(yieldKg<=0 || yieldUnits<=0) return alert("Informe rendimento em KG e em unidades (maior que zero).");
+  if(yieldKg<=0 || yieldUnits<=0) return alert("Informe rendimento de massa e final em KG (maior que zero).");
 
   const ingredients = cfgIngredients
     .map(x=>({ name:(x.name||"").trim(), qty: toNum(x.qty), unit:(x.unit||"").trim() }))
     .filter(x=>x.name && x.qty>0);
+
+  const imgUrl = $("#cfgImgUrl").value.trim();
+  const finalImage = imgUrl ? imgUrl : (cfgImageDataUrl || (editingProductId ? productById(editingProductId)?.imageDataUrl : null));
 
   const product = {
     id: editingProductId || uid(),
     name, scaleCode, recipeCode,
     yieldKg, yieldUnits,
     lowKg: lowKg || 0,
-    imageDataUrl: cfgImageDataUrl || (editingProductId ? productById(editingProductId)?.imageDataUrl : null),
+    imageDataUrl: finalImage,
     ingredients,
     updatedAt: new Date().toISOString(),
   };
@@ -1364,6 +1326,7 @@ window.editProduto = (id)=>{
   $("#cfgRendUn").value = p.yieldUnits || "";
   $("#cfgLowKg").value = p.lowKg || "";
   $("#cfgImg").value = "";
+  $("#cfgImgUrl").value = (p.imageDataUrl && p.imageDataUrl.startsWith("http")) ? p.imageDataUrl : "";
   cfgIngredients = (p.ingredients||[]).map(x=>({name:x.name, qty:x.qty, unit:x.unit}));
   renderCfgIngredientTable();
   toast("Editando produto.");
@@ -1384,9 +1347,10 @@ $("#btnLoadExample").addEventListener("click", ()=>{
   $("#cfgBalanca").value = "5210";
   $("#cfgReceita").value = "4753";
   $("#cfgRendKg").value = "14.659";
-  $("#cfgRendUn").value = "21";
+  $("#cfgRendUn").value = "12.500";
   $("#cfgLowKg").value = "2.000";
   cfgImageDataUrl = "./assets/pao-caseiro.png";
+  $("#cfgImgUrl").value = "";
   cfgIngredients = [
     {name:"MP SAL REFINADO KG", qty:"0.120", unit:"KG"},
     {name:"MP ACUCAR CRISTAL KG", qty:"1.150", unit:"KG"},
@@ -1413,7 +1377,6 @@ $("#btnLoadExample").addEventListener("click", ()=>{
 })();
 </script>
 
-<!-- Firebase (auth + role gating) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
