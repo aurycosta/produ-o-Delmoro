@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#111827" />
-  <title>Produção DelMORO (v2)</title>
+  <title>MESA QUENTE DELMORO🥣</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icons/icon-192.png">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -268,7 +268,7 @@
   <div class="title">
     <h1>
       <span style="display:inline-flex;width:10px;height:10px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 6px rgba(34,197,94,.15)"></span>
-      <img src="./assets/delmoro-logo.png" alt="DelMORO" class="brandLogo"> <span>Produção DelMORO</span> <span class="badge">v2</span>
+      <img src="./assets/delmoro-logo.png" alt="DelMORO" class="brandLogo"> <span>MESA QUENTE DELMORO</span> <span class="badge">🥣</span>
     </h1>
     <div class="headerActions">
       <span id="adminBadge" class="badge" style="display:none">ADM</span>
@@ -702,7 +702,7 @@ $all(".tab").forEach(t => t.addEventListener("click", ()=>setTab(t.dataset.tab))
 
 /* Backup/Restore */
 $("#btnExport").addEventListener("click", ()=>{
-  const payload = { exportedAt:new Date().toISOString(), app:"Produção DelMORO", version:2, data:state };
+  const payload = { exportedAt:new Date().toISOString(), app:"MESA QUENTE DELMORO", version:2, data:state };
   const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
