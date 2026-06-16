@@ -58,8 +58,9 @@
     nav{
       margin-top:10px;
       display:grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap:8px;
+      max-width: 600px;
     }
     .tab{
       border:1px solid rgba(148,163,184,.18);
@@ -203,10 +204,6 @@
     .tile .meta .name{ font-size: 14px; font-weight: 900; letter-spacing: .2px; text-shadow: 0 6px 18px rgba(0,0,0,.45); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .tile .meta .code{ font-size: 12px; color: rgba(229,231,235,.92); display:flex; gap:8px; align-items:center; }
     .tile .meta .code .mono{ font-weight:900; }
-    .tile .badge-status{ position:absolute; top:10px; right:10px; border-radius: 999px; padding: 6px 10px; font-size: 11px; border:1px solid rgba(148,163,184,.18); background: rgba(2,6,23,.55); backdrop-filter: blur(8px); color: var(--muted); display:flex; gap:6px; align-items:center; }
-    .tile.ok{ border-color: rgba(34,197,94,.32); }
-    .tile.warn{ border-color: rgba(245,158,11,.32); }
-    .tile.bad{ border-color: rgba(239,68,68,.32); }
 
     /* Layout helpers */
     .container{ max-width: 1280px; margin: 0 auto; }
@@ -283,8 +280,6 @@
   </div>
   <nav>
     <div class="tab active" data-tab="producao">🍞 Produção</div>
-    <div class="tab" data-tab="vendas">🧾 Vendas</div>
-    <div class="tab" data-tab="historico">📈 Histórico</div>
     <div class="tab" data-tab="config">⚙️ Config</div>
   </nav>
 </header>
@@ -303,14 +298,6 @@
               <label>Buscar</label>
               <input id="searchProd" placeholder="Digite o nome, cod. balança ou cod. receita" />
             </div>
-            <div style="max-width:240px">
-              <label>Filtro</label>
-              <select id="filterAlert">
-                <option value="all">Todos</option>
-                <option value="need">⚠️ Precisa produzir (zerou)</option>
-                <option value="low">🔶 Baixo estoque</option>
-              </select>
-            </div>
           </div>
           <div class="hr"></div>
           <div class="grid tiles" id="prodGrid"></div>
@@ -323,7 +310,6 @@
       <div class="card">
         <div class="hd">
           <h2>Calcular produção</h2>
-          <span class="muted" id="calcStatus" style="font-weight:800">Selecione um produto</span>
         </div>
         <div class="bd">
           <div class="row">
@@ -358,134 +344,6 @@
               <tbody></tbody>
             </table>
           </div>
-
-          <div class="hr"></div>
-          <div class="notice" id="alertBox" style="display:none"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="tab-vendas" style="display:none">
-    <div class="grid twoEq">
-      <div class="card">
-        <div class="hd"><h2>Registrar vendas do dia</h2><span class="muted">Alimente diariamente</span></div>
-        <div class="bd">
-          <div class="row">
-            <div><label>Data</label><input id="saleDate" type="date" /></div>
-            <div style="flex:2; min-width:240px"><label>Produto</label><select id="saleProduto"></select></div>
-            <div><label>Qtd vendida (KG)</label><input id="saleUnits" type="number" min="0" step="0.001" placeholder="Ex.: 8.200" /></div>
-          </div>
-          <div class="row" style="margin-top:10px">
-            <div style="display:flex; align-items:flex-end; gap:10px; width:100%;">
-              <button class="btn" id="btnAddSale" style="flex:1">Adicionar venda</button>
-              <button class="btn secondary" id="btnClearSales" style="flex:1">Limpar dia</button>
-            </div>
-          </div>
-          <div class="hr"></div>
-          <div class="notice muted" id="kpiDay"></div>
-
-          <div class="hr"></div>
-          <div class="sectionTitle">Registrar quebras do dia <span class="muted" style="font-weight:700">(desconta do estoque)</span></div>
-          <div class="row">
-            <div style="flex:2; min-width:240px"><label>Produto</label><select id="breakProduto"></select></div>
-            <div><label>Qtd quebrada (KG)</label><input id="breakUnits" type="number" min="0" step="0.001" placeholder="Ex.: 1.250" /></div>
-          </div>
-          <div class="row" style="margin-top:10px">
-            <div style="flex:2">
-              <label>Motivo</label>
-              <select id="breakReason">
-                <option value="">Selecione…</option>
-                <option value="Vencimento">Vencimento</option>
-                <option value="Avaria">Avaria</option>
-                <option value="Erro na Produção">Erro na Produção</option>
-              </select>
-            </div>
-            <div style="display:flex; align-items:flex-end; gap:10px; min-width:260px;">
-              <button class="btn" id="btnAddBreak" style="flex:1">Adicionar quebra</button>
-              <button class="btn secondary" id="btnClearBreaks" style="flex:1">Limpar dia</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="hd"><h2>Estoque (Produção × Vendas × Quebras)</h2><span class="muted">estimativa</span></div>
-        <div class="bd">
-          <div class="notice muted">
-            <strong>Como funciona:</strong> ao registrar uma <strong>produção</strong>, soma o <strong>KG produzido</strong>.
-            Ao registrar <strong>vendas</strong> ou <strong>quebras</strong>, subtrai. Isso gera o saldo (KG).
-          </div>
-          <div class="hr"></div>
-          <div class="tableWrap">
-            <table class="table" id="tblEstoque">
-              <thead><tr><th>Produto</th><th class="right">Produzido (KG)</th><th class="right">Vendido (KG)</th><th class="right">Quebra (KG)</th><th class="right">Saldo (KG)</th><th>Status</th></tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <div class="small" style="margin-top:10px">Quando “zerou”, o produto aparece com alerta na tela de produção.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="tab-historico" style="display:none">
-    <div class="grid">
-      <div class="card">
-        <div class="hd"><h2>Histórico</h2><span class="muted">Produções, Vendas e Quebras</span></div>
-        <div class="bd">
-          <div class="row">
-            <div>
-              <label>Período</label>
-              <select id="histRange">
-                <option value="7">7 dias</option>
-                <option value="15">15 dias</option>
-                <option value="30" selected>30 dias</option>
-                <option value="60">60 dias</option>
-              </select>
-            </div>
-            <div style="max-width:240px"><label>Produto (opcional)</label><select id="histProduto"></select></div>
-            <div style="display:flex; align-items:flex-end; gap:10px">
-              <button class="btn secondary" id="btnRefreshHist" style="min-width:180px">Atualizar</button>
-              <button class="btn warn" id="btnExportCSV" style="min-width:180px">Exportar CSV</button>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-          <div class="grid twoEq">
-            <div>
-              <div class="muted">Produções</div>
-              <div style="overflow:auto; margin-top:8px">
-                <table class="table" id="tblHistProd">
-                  <thead><tr><th>Data</th><th>Produto</th><th class="right">KG</th></tr></thead>
-                  <tbody></tbody>
-                </table>
-              </div>
-            </div>
-            <div>
-              <div class="muted">Vendas</div>
-              <div style="overflow:auto; margin-top:8px">
-                <table class="table" id="tblHistSales">
-                  <thead><tr><th>Data</th><th>Produto</th><th class="right">KG</th></tr></thead>
-                  <tbody></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-          <div>
-            <div class="muted">Quebras</div>
-            <div style="overflow:auto; margin-top:8px">
-              <table class="table" id="tblHistBreaks">
-                <thead><tr><th>Data</th><th>Produto</th><th>Motivo</th><th class="right">KG</th></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-          <div class="hr"></div>
-          <button class="btn danger" id="btnClearHistory">Apagar histórico</button>
-          <div class="small">Isso apaga produções, vendas e quebras, mas mantém as receitas configuradas.</div>
         </div>
       </div>
     </div>
@@ -505,7 +363,6 @@
           <div class="row" style="margin-top:10px">
             <div><label>Rendimento massa crua (KG)</label><input id="cfgRendKg" type="number" step="0.001" placeholder="Ex.: 14.659" /></div>
             <div><label>Rendimento final (KG)</label><input id="cfgRendUn" type="number" step="0.001" placeholder="Ex.: 12.500" /></div>
-            <div><label>Baixo estoque (KG)</label><input id="cfgLowKg" type="number" step="0.001" placeholder="Ex.: 2.000" /></div>
           </div>
 
           <div class="row" style="margin-top:10px">
@@ -576,7 +433,7 @@
     </div>
     <div class="bd">
       <div class="notice muted" style="margin-top:0">
-        Use seu usuário admin para liberar Vendas, Histórico e Config.
+        Use seu usuário admin para liberar Configuração de Produtos.
       </div>
       <div class="row">
         <div style="flex:1; min-width:220px">
@@ -650,7 +507,7 @@ function loadState(){
       products: Array.isArray(data.products) ? data.products : [],
       productions: Array.isArray(data.productions) ? data.productions : [],
       sales: Array.isArray(data.sales) ? data.sales : [],
-    breaks: Array.isArray(data.breaks) ? data.breaks : (Array.isArray(data.quebras) ? data.quebras : []),
+      breaks: Array.isArray(data.breaks) ? data.breaks : (Array.isArray(data.quebras) ? data.quebras : []),
     };
   }catch(e){
     return { products: [], productions: [], sales: [], breaks: [] };
@@ -659,7 +516,6 @@ function loadState(){
 function saveStateLocalOnly(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
 function saveState(){
   saveStateLocalOnly();
-  // Se o Firebase estiver ativo, salva também no Realtime Database (debounced)
   try{ window.__delmoroSync?.scheduleSave?.(state); }catch(e){}
 }
 let state = loadState();
@@ -679,8 +535,6 @@ window.__delmoroApp = {
       saveStateLocalOnly();
 
       try{ renderProducao?.(); }catch(e){}
-      try{ renderVendas?.(); }catch(e){}
-      try{ renderHistorico?.(); }catch(e){}
       try{ renderConfig?.(); }catch(e){}
     }catch(e){}
   }
@@ -689,13 +543,11 @@ window.__delmoroApp = {
 try{ window.__delmoroSync?.hydrateOnce?.(); }catch(e){}
 
 /* Tabs */
-const tabs = { producao: $("#tab-producao"), vendas: $("#tab-vendas"), historico: $("#tab-historico"), config: $("#tab-config") };
+const tabs = { producao: $("#tab-producao"), config: $("#tab-config") };
 function setTab(name){
   $all(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab===name));
   Object.entries(tabs).forEach(([k,el])=> el.style.display = (k===name) ? "" : "none");
   if(name==="producao") renderProducao();
-  if(name==="vendas") renderVendas();
-  if(name==="historico") renderHistorico();
   if(name==="config") renderConfig();
 }
 $all(".tab").forEach(t => t.addEventListener("click", ()=>setTab(t.dataset.tab)));
@@ -710,66 +562,39 @@ $("#btnExport").addEventListener("click", ()=>{
   a.click();
   URL.revokeObjectURL(a.href);
 });
-$("#fileImport").addEventListener("change", async (ev)=>{
+
+$("#fileImport").addEventListener("change", (ev)=>{
   const file = ev.target.files?.[0];
   if(!file) return;
-  try{
-    const obj = JSON.parse(await file.text());
-    if(!obj?.data) throw new Error("Formato inválido.");
-    const d = obj.data;
-    state.products = Array.isArray(d.products) ? d.products : [];
-    state.productions = Array.isArray(d.productions) ? d.productions : [];
-    state.sales = Array.isArray(d.sales) ? d.sales : [];
-    state.breaks = Array.isArray(d.breaks) ? d.breaks : (Array.isArray(d.quebras) ? d.quebras : []);
-    saveState();
-    toast("Importado com sucesso.");
-    setTab("producao");
-  }catch(e){
-    alert("Falha ao importar: " + (e?.message || e));
-  }finally{ ev.target.value=""; }
+  file.text().then(text => {
+    try{
+      const obj = JSON.parse(text);
+      if(!obj?.data) throw new Error("Formato inválido.");
+      const d = obj.data;
+      state.products = Array.isArray(d.products) ? d.products : [];
+      state.productions = Array.isArray(d.productions) ? d.productions : [];
+      state.sales = Array.isArray(d.sales) ? d.sales : [];
+      state.breaks = Array.isArray(d.breaks) ? d.breaks : (Array.isArray(d.quebras) ? d.quebras : []);
+      saveState();
+      toast("Importado com sucesso.");
+      setTab("producao");
+    }catch(e){
+      alert("Falha ao importar: " + (e?.message || e));
+    }finally{ ev.target.value=""; }
+  });
 });
+
 $("#btnReset").addEventListener("click", ()=>{
-  if(!confirm("Tem certeza? Isso apaga TUDO (receitas, produção, vendas e quebras).")) return;
+  if(!confirm("Tem certeza? Isso apaga TUDO (receitas e histórico de produções).")) return;
   state = { products: [], productions: [], sales: [], breaks: [] };
   saveState();
   toast("Dados apagados.");
   setTab("config");
 });
 
-/* Helpers saldo */
-function producedKgByProduct(){
-  const map = new Map();
-  for(const p of state.productions) map.set(p.productId, (map.get(p.productId)||0) + toNum(p.producedKg));
-  return map;
-}
-function soldKgByProduct(){
-  const map = new Map();
-  for(const s of state.sales) map.set(s.productId, (map.get(s.productId)||0) + toNum(s.soldKg));
-  return map;
-}
-function brokenKgByProduct(){
-  const map = new Map();
-  for(const b of (state.breaks||[])) map.set(b.productId, (map.get(b.productId)||0) + toNum(b.brokenKg));
-  return map;
-}
-function saldoKg(productId){
-  const prod = producedKgByProduct().get(productId)||0;
-  const sold = soldKgByProduct().get(productId)||0;
-  const broken = brokenKgByProduct().get(productId)||0;
-  return prod - sold - broken;
-}
-function productById(id){ return state.products.find(p=>p.id===id); }
-function calcStatusPill(productId){
-  const p = productById(productId);
-  if(!p) return { cls:"", text:"Selecione um produto" };
-  const s = saldoKg(productId);
-  const low = toNum(p.lowKg) || 0;
-  if(s <= 0) return { cls:"bad", text:"⚠️ ZEROU (produzir mais)" };
-  if(low>0 && s < low) return { cls:"warn", text:"🔶 Baixo (quase zerando)" };
-  return { cls:"ok", text:"✅ OK" };
-}
-
 /* Produção */
+function productById(id){ return state.products.find(p=>p.id===id); }
+
 const defaultSelectOption = `<option value="">Selecione…</option>`;
 let currentProductId = "";
 
@@ -785,7 +610,6 @@ function renderProducao(){
 }
 function renderProductCards(){
   const q = ($("#searchProd").value||"").trim().toLowerCase();
-  const filter = $("#filterAlert").value;
   const grid = $("#prodGrid");
 
   let items = state.products.slice();
@@ -795,42 +619,28 @@ function renderProductCards(){
       return hay.includes(q);
     });
   }
-  if(filter !== "all"){
-    items = items.filter(p=>{
-      const s = saldoKg(p.id);
-      const low = toNum(p.lowKg)||0;
-      if(filter==="need") return s <= 0;
-      if(filter==="low") return (s > 0 && low>0 && s < low);
-      return true;
-    });
-  }
 
   grid.innerHTML = items.map(p=>{
-    const st = calcStatusPill(p.id);
     const imgHtml = p.imageDataUrl
       ? `<img src="${p.imageDataUrl}" alt="${escapeHtml(p.name)}">`
       : `<span>${(p.name||"P").slice(0,1).toUpperCase()}</span>`;
-    let badgeTxt = "OK";
-    if(st.cls==="bad") badgeTxt = "Zerou";
-    else if(st.cls==="warn") badgeTxt = "Baixo";
     return `
-      <div class="tile ${st.cls||""}" role="button" tabindex="0"
+      <div class="tile" role="button" tabindex="0"
            onclick="selectProduct('${p.id}')"
            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectProduct('${p.id}')}">
         <div class="img">${imgHtml}</div>
         <div class="overlay"></div>
-        <div class="badge-status">${st.cls==="bad" ? "⚠️" : st.cls==="warn" ? "🔶" : "✅"} ${badgeTxt}</div>
         <div class="meta">
           <div class="name" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div>
           <div class="code">Cod. Balança <span class="mono">${escapeHtml(p.scaleCode||"-")}</span></div>
-          <div class="code">Estoque atual <span class="mono">${fmt(Math.max(0, saldoKg(p.id)),3)} kg</span></div>
         </div>
       </div>
     `;
   }).join("");
 
-  if(!items.length && state.products.length) grid.innerHTML = `<div class="notice muted">Nada encontrado com o filtro atual.</div>`;
+  if(!items.length && state.products.length) grid.innerHTML = `<div class="notice muted">Nenhum produto com esse nome.</div>`;
 }
+
 window.selectProduct = (id)=>{
   currentProductId = id;
   $("#selProduto").value = id;
@@ -839,7 +649,6 @@ window.selectProduct = (id)=>{
 };
 
 $("#searchProd").addEventListener("input", renderProductCards);
-$("#filterAlert").addEventListener("change", renderProductCards);
 $("#selProduto").addEventListener("change", ()=>{ currentProductId = $("#selProduto").value || ""; updateCalc(); });
 $("#inpQtdUn").addEventListener("input", updateCalc);
 
@@ -849,13 +658,9 @@ function updateCalc(){
   const qtyKg = toNum($("#inpQtdUn").value);
   const tb = $("#tblIngredientes tbody");
   const info = $("#chipsInfo");
-  const alertBox = $("#alertBox");
-  const st = calcStatusPill(pid);
-  $("#calcStatus").textContent = st.text;
 
   tb.innerHTML = "";
   info.textContent = "";
-  alertBox.style.display = "none";
 
   if(!p){
     info.textContent = "Selecione um produto para calcular.";
@@ -889,16 +694,6 @@ function updateCalc(){
     const unit = i.unit || "—";
     return `<tr><td>${escapeHtml(i.name)}</td><td class="right mono">${fmt(q)}</td><td class="nowrap">${escapeHtml(unit)}</td></tr>`;
   }).join("");
-
-  const saldo = saldoKg(pid);
-  const low = toNum(p.lowKg)||0;
-  const alerts = [];
-  if(saldo<=0) alerts.push(`⚠️ <strong>Zerou</strong>: você já vendeu tudo o que foi produzido. Considere produzir mais.`);
-  else if(low>0 && saldo<low) alerts.push(`🔶 <strong>Baixo</strong>: saldo ${fmt(saldo)} kg abaixo do limite ${fmt(low)} kg.`);
-  if(alerts.length){
-    alertBox.innerHTML = alerts.join("<br>");
-    alertBox.style.display = "";
-  }
 }
 
 $("#btnImprimirReceita").addEventListener("click", ()=>{
@@ -912,7 +707,6 @@ $("#btnImprimirReceita").addEventListener("click", ()=>{
   const dt = new Date().toLocaleString("pt-BR");
   const recipeCode = p.recipeCode ? String(p.recipeCode) : "-";
   const scaleCode = p.scaleCode ? String(p.scaleCode) : "-";
-  const statusTxt = $("#calcStatus")?.textContent || "";
 
   const w = window.open("", "_blank");
   if(!w) return alert("Pop-up bloqueado. Permita pop-ups para imprimir.");
@@ -964,11 +758,6 @@ $("#btnImprimirReceita").addEventListener("click", ()=>{
   </div>
 
   <div class="box">
-    <div class="label">Resumo</div>
-    <div class="val">${escapeHtml(statusTxt)}</div>
-  </div>
-
-  <div class="box">
     <div class="label">Ingredientes (ajustado pela quantidade)</div>
     ${tblHtml}
   </div>
@@ -997,206 +786,6 @@ $("#btnRegistrarProducao").addEventListener("click", ()=>{
   toast("Produção registrada.");
   $("#inpQtdUn").value = "";
   renderProducao();
-});
-
-/* Vendas */
-function renderVendas(){
-  $("#saleDate").value = $("#saleDate").value || nowISODate();
-  $("#saleProduto").innerHTML = defaultSelectOption + state.products.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
-  if(state.products.length && !$("#saleProduto").value) $("#saleProduto").value = state.products[0].id;
-  $("#breakProduto").innerHTML = defaultSelectOption + state.products.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
-  if(state.products.length && !$("#breakProduto").value) $("#breakProduto").value = state.products[0].id;
-  renderEstoqueTable();
-  updateDaySummary();
-}
-function saleRecordsForDay(day){ return state.sales.filter(s=>s.date===day); }
-function breakRecordsForDay(day){ return (state.breaks||[]).filter(b=>b.date===day); }
-
-
-$("#btnAddSale").addEventListener("click", ()=>{
-  const date = $("#saleDate").value || nowISODate();
-  const pid = $("#saleProduto").value || "";
-  const p = productById(pid);
-  if(!p) return alert("Selecione um produto.");
-  const soldKg = toNum($("#saleUnits").value);
-  if(soldKg<=0) return alert("Informe a quantidade vendida em KG.");
-
-  state.sales.push({ id:uid(), date, productId:pid, soldKg, createdAt:new Date().toISOString() });
-  saveState();
-  toast("Venda adicionada.");
-  $("#saleUnits").value = "";
-  renderVendas();
-  renderProducao();
-});
-
-$("#btnClearSales").addEventListener("click", ()=>{
-  const day = $("#saleDate").value || nowISODate();
-  const count = saleRecordsForDay(day).length;
-  if(!count) return toast("Nada para limpar.");
-  if(!confirm(`Remover ${count} venda(s) do dia ${day}?`)) return;
-  state.sales = state.sales.filter(s=>s.date!==day);
-  saveState();
-  toast("Vendas do dia removidas.");
-  renderVendas(); renderProducao();
-});
-
-$("#btnAddBreak").addEventListener("click", ()=>{
-  const date = $("#saleDate").value || nowISODate();
-  const pid = $("#breakProduto").value || "";
-  const p = productById(pid);
-  if(!p) return alert("Selecione um produto.");
-  const reason = ($("#breakReason").value||"").trim();
-  if(!reason) return alert("Selecione o motivo da quebra.");
-
-  const brokenKg = toNum($("#breakUnits").value);
-  if(brokenKg<=0) return alert("Informe a quantidade quebrada em KG.");
-
-  state.breaks = state.breaks || [];
-  state.breaks.push({ id:uid(), date, productId:pid, reason, brokenKg, createdAt:new Date().toISOString() });
-  saveState();
-  toast("Quebra adicionada.");
-  $("#breakUnits").value = ""; $("#breakReason").value = "";
-  renderVendas();
-  renderProducao();
-});
-
-$("#btnClearBreaks").addEventListener("click", ()=>{
-  const day = $("#saleDate").value || nowISODate();
-  const count = breakRecordsForDay(day).length;
-  if(!count) return toast("Nada para limpar.");
-  if(!confirm(`Remover ${count} quebra(s) do dia ${day}?`)) return;
-  state.breaks = (state.breaks||[]).filter(b=>b.date!==day);
-  saveState();
-  toast("Quebras do dia removidas.");
-  renderVendas(); renderProducao();
-});
-
-$("#saleDate").addEventListener("change", updateDaySummary);
-
-function renderEstoqueTable(){
-  const tb = $("#tblEstoque tbody");
-  const prodMade = producedKgByProduct();
-  const prodSold = soldKgByProduct();
-  const prodBroken = brokenKgByProduct();
-  if(!state.products.length){
-    tb.innerHTML = `<tr><td colspan="6" class="muted">Cadastre produtos em Config.</td></tr>`;
-    return;
-  }
-  tb.innerHTML = state.products.map(p=>{
-    const made = prodMade.get(p.id)||0;
-    const sold = prodSold.get(p.id)||0;
-    const broken = prodBroken.get(p.id)||0;
-    const saldo = made - sold - broken;
-    const st = calcStatusPill(p.id);
-    const badge = st.cls==="bad" ? "⚠️ Zerou" : st.cls==="warn" ? "🔶 Baixo" : "✅ OK";
-    return `<tr>
-      <td>${escapeHtml(p.name)}</td>
-      <td class="right mono">${fmt(made)}</td>
-      <td class="right mono">${fmt(sold)}</td>
-      <td class="right mono">${fmt(broken)}</td>
-      <td class="right mono">${fmt(saldo)}</td>
-      <td class="nowrap">${badge}</td>
-    </tr>`;
-  }).join("");
-}
-function updateDaySummary(){
-  const day = $("#saleDate").value || nowISODate();
-  const recs = saleRecordsForDay(day);
-  const brecs = breakRecordsForDay(day);
-  const count = recs.length;
-  const bcount = brecs.length;
-  const kg = recs.reduce((a,x)=>a+toNum(x.soldKg),0);
-  const bkg = brecs.reduce((a,x)=>a+toNum(x.brokenKg),0);
-  let alerts=0;
-  for(const p of state.products){
-    const s = saldoKg(p.id);
-    const low = toNum(p.lowKg)||0;
-    if(s<=0 || (low>0 && s<low)) alerts++;
-  }
-  $("#kpiDay").innerHTML = `Vendas: <strong>${fmtInt(count)}</strong> • Total: <strong>${fmt(kg)} KG</strong><br>Quebras: <strong>${fmtInt(bcount)}</strong> • Total: <strong>${fmt(bkg)} KG</strong> • Alertas: <strong>${fmtInt(alerts)}</strong>`;
-}
-
-/* Histórico */
-function withinRangeISO(dateStr, days){
-  const d = new Date(dateStr+"T00:00:00");
-  const cutoff = new Date(); cutoff.setHours(0,0,0,0);
-  cutoff.setDate(cutoff.getDate() - (days-1));
-  return d >= cutoff;
-}
-function renderHistorico(){
-  $("#histProduto").innerHTML = `<option value="">Todos</option>` + state.products.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
-  refreshHistoryTables();
-}
-$("#btnRefreshHist").addEventListener("click", refreshHistoryTables);
-
-function refreshHistoryTables(){
-  const days = parseInt($("#histRange").value||"30",10);
-  const pid = $("#histProduto").value || "";
-
-  let prods = state.productions.filter(x=>withinRangeISO(x.date, days));
-  let sales = state.sales.filter(x=>withinRangeISO(x.date, days));
-  if(pid){ prods = prods.filter(x=>x.productId===pid); sales = sales.filter(x=>x.productId===pid); }
-
-  const tbP = $("#tblHistProd tbody");
-  const tbS = $("#tblHistSales tbody");
-
-  tbP.innerHTML = prods.sort((a,b)=>b.date.localeCompare(a.date)).map(x=>{
-    const p = productById(x.productId);
-    return `<tr><td class="nowrap">${escapeHtml(x.date)}</td><td>${escapeHtml(p?.name||"-")}</td><td class="right mono">${fmt(x.producedKg||0)}</td></tr>`;
-  }).join("") || `<tr><td colspan="3" class="muted">Sem produções no período.</td></tr>`;
-
-  tbS.innerHTML = sales.sort((a,b)=>b.date.localeCompare(a.date)).map(x=>{
-    const p = productById(x.productId);
-    return `<tr><td class="nowrap">${escapeHtml(x.date)}</td><td>${escapeHtml(p?.name||"-")}</td><td class="right mono">${fmt(x.soldKg||0)}</td></tr>`;
-  }).join("") || `<tr><td colspan="3" class="muted">Sem vendas no período.</td></tr>`;
-
-  // Quebras
-  let breaks = (state.breaks||[]).filter(x=>withinRangeISO(x.date, days));
-  if(pid) breaks = breaks.filter(x=>x.productId===pid);
-  breaks.sort((a,b)=> (a.date<b.date?1:-1));
-  $("#tblHistBreaks tbody").innerHTML = breaks.map(x=>{
-    const p = productById(x.productId);
-    return `<tr><td class="mono">${x.date}</td><td>${escapeHtml(p?.name||"-")}</td><td>${escapeHtml(x.reason||"-")}</td><td class="right mono">${fmt(x.brokenKg||0)}</td></tr>`;
-  }).join("") || `<tr><td colspan="4" class="muted">Sem quebras no período.</td></tr>`;
-}
-
-$("#btnExportCSV").addEventListener("click", ()=>{
-  const days = parseInt($("#histRange").value||"30",10);
-  const pid = $("#histProduto").value || "";
-  let prods = state.productions.filter(x=>withinRangeISO(x.date, days));
-  let sales = state.sales.filter(x=>withinRangeISO(x.date, days));
-  if(pid){ prods = prods.filter(x=>x.productId===pid); sales = sales.filter(x=>x.productId===pid); }
-  const lines = [];
-  lines.push(["tipo","data","produto","motivo","kg"].join(";"));
-  for(const x of prods){
-    const p = productById(x.productId);
-    lines.push(["producao", x.date, (p?.name||"-"), "", (toNum(x.producedKg)).toFixed(3)].join(";"));
-  }
-  for(const x of sales){
-    const p = productById(x.productId);
-    lines.push(["venda", x.date, (p?.name||"-"), "", (toNum(x.soldKg)).toFixed(3)].join(";"));
-  }
-  
-  let breaks = (state.breaks||[]).filter(x=>withinRangeISO(x.date, days));
-  if(pid) breaks = breaks.filter(x=>x.productId===pid);
-  for(const x of breaks){
-    const p = productById(x.productId);
-    lines.push(["quebra", x.date, (p?.name||"-"), (x.reason||""), (toNum(x.brokenKg)).toFixed(3)].join(";"));
-  }
-const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `historico_${days}d_${nowISODate()}.csv`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-});
-
-$("#btnClearHistory").addEventListener("click", ()=>{
-  if(!confirm("Apagar TODO o histórico de produções, vendas e quebras?")) return;
-  state.productions = []; state.sales = []; state.breaks = [];
-  saveState();
-  toast("Histórico apagado.");
-  renderHistorico(); renderProducao();
 });
 
 /* Config */
@@ -1249,58 +838,60 @@ window.cfgIngDel = (idx)=>{ cfgIngredients.splice(idx,1); renderCfgIngredientTab
 $("#btnAddIng").addEventListener("click", ()=>addCfgIngRow());
 
 /* IMPORTAÇÃO DE PLANILHA */
-$("#cfgImportXlsx").addEventListener("change", async (ev)=>{
+$("#cfgImportXlsx").addEventListener("change", (ev)=>{
   const file = ev.target.files?.[0];
   if(!file) return;
   
-  try {
-    const buffer = await file.arrayBuffer();
-    // Usa o SheetJS para ler o buffer do arquivo (suporta .xlsx, .xls, .csv)
-    const workbook = XLSX.read(buffer, { type: 'array' });
-    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-    // Converte a primeira aba para um array de arrays (cada linha é um array)
-    const json = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+  file.arrayBuffer().then(buffer => {
+    try {
+      const workbook = XLSX.read(buffer, { type: 'array' });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
 
-    let count = 0;
-    
-    // Passa por todas as linhas da planilha
-    for(const row of json) {
-      if(!row || row.length < 5) continue; // Garante que tem pelo menos a coluna E (índice 4)
+      let count = 0;
       
-      const desc = String(row[1] || "").trim(); // Coluna B (índice 1)
-      const qtyRaw = row[4]; // Coluna E (índice 4)
-      const qty = toNum(qtyRaw);
+      for(const row of json) {
+        if(!row || row.length < 5) continue;
+        
+        const desc = String(row[1] || "").trim();
+        const qtyRaw = row[4];
+        const qty = toNum(qtyRaw);
 
-      // Tenta extrair a unidade da coluna C (índice 2) se houver. Se não, vira KG.
-      const unitRaw = String(row[2] || "KG").trim().substring(0, 2).toUpperCase();
-      const unit = ["UN", "KG", "LT", "L", "CX", "PC"].includes(unitRaw) ? unitRaw : "KG";
+        const unitRaw = String(row[2] || "KG").trim().substring(0, 2).toUpperCase();
+        const unit = ["UN", "KG", "LT", "L", "CX", "PC"].includes(unitRaw) ? unitRaw : "KG";
 
-      // Ignora nomes como "Descrição" (cabeçalho) e quantidades zeradas
-      if(desc && desc.toLowerCase() !== "descrição" && desc.toLowerCase() !== "produto" && qty > 0) {
-        cfgIngredients.push({ name: desc, qty: qty, unit: unit });
-        count++;
+        if(desc && desc.toLowerCase() !== "descrição" && desc.toLowerCase() !== "produto" && qty > 0) {
+          cfgIngredients.push({ name: desc, qty: qty, unit: unit });
+          count++;
+        }
       }
-    }
 
-    if(count > 0) {
-      renderCfgIngredientTable();
-      toast(`${count} ingredientes importados!`);
-    } else {
-      alert("Nenhum dado válido encontrado. Verifique se as informações estão nas colunas B (nome) e E (quantidade).");
+      if(count > 0) {
+        renderCfgIngredientTable();
+        toast(`${count} ingredientes importados!`);
+      } else {
+        alert("Nenhum dado válido encontrado. Verifique se as informações estão nas colunas B (nome) e E (quantidade).");
+      }
+    } catch(err) {
+      alert("Erro ao ler a planilha: " + err.message);
+    } finally {
+      ev.target.value = "";
     }
-  } catch(err) {
-    alert("Erro ao ler a planilha: " + err.message);
-  } finally {
-    ev.target.value = ""; // Reseta para poder importar de novo
-  }
+  }).catch(err => {
+    alert("Erro fatal ao carregar o arquivo.");
+    ev.target.value = "";
+  });
 });
 
-$("#cfgImg").addEventListener("change", async (ev)=>{
+$("#cfgImg").addEventListener("change", (ev)=>{
   const f = ev.target.files?.[0];
   if(!f) return;
-  cfgImageDataUrl = await fileToDataURL(f);
-  toast("Imagem carregada.");
+  fileToDataURL(f).then(res => {
+    cfgImageDataUrl = res;
+    toast("Imagem carregada.");
+  });
 });
+
 function fileToDataURL(file){
   return new Promise((resolve,reject)=>{
     const reader = new FileReader();
@@ -1317,7 +908,6 @@ function clearCfgForm(){
   $("#cfgReceita").value = "";
   $("#cfgRendKg").value = "";
   $("#cfgRendUn").value = "";
-  $("#cfgLowKg").value = "";
   $("#cfgImg").value = "";
   $("#cfgImgUrl").value = "";
   cfgIngredients = [];
@@ -1330,7 +920,6 @@ $("#btnSaveProduto").addEventListener("click", ()=>{
   const recipeCode = ($("#cfgReceita").value||"").trim();
   const yieldKg = toNum($("#cfgRendKg").value);
   const yieldUnits = toNum($("#cfgRendUn").value);
-  const lowKg = toNum($("#cfgLowKg").value);
 
   if(!name) return alert("Informe o nome do produto.");
   if(yieldKg<=0 || yieldUnits<=0) return alert("Informe rendimento de massa e final em KG (maior que zero).");
@@ -1346,7 +935,6 @@ $("#btnSaveProduto").addEventListener("click", ()=>{
     id: editingProductId || uid(),
     name, scaleCode, recipeCode,
     yieldKg, yieldUnits,
-    lowKg: lowKg || 0,
     imageDataUrl: finalImage,
     ingredients,
     updatedAt: new Date().toISOString(),
@@ -1361,7 +949,7 @@ $("#btnSaveProduto").addEventListener("click", ()=>{
   saveState();
   toast(editingProductId ? "Produto atualizado." : "Produto cadastrado.");
   clearCfgForm();
-  renderConfig(); renderProducao(); renderVendas(); renderHistorico();
+  renderConfig(); renderProducao();
 });
 
 window.editProduto = (id)=>{
@@ -1374,7 +962,6 @@ window.editProduto = (id)=>{
   $("#cfgReceita").value = p.recipeCode || "";
   $("#cfgRendKg").value = p.yieldKg || "";
   $("#cfgRendUn").value = p.yieldUnits || "";
-  $("#cfgLowKg").value = p.lowKg || "";
   $("#cfgImg").value = "";
   $("#cfgImgUrl").value = (p.imageDataUrl && p.imageDataUrl.startsWith("http")) ? p.imageDataUrl : "";
   cfgIngredients = (p.ingredients||[]).map(x=>({name:x.name, qty:x.qty, unit:x.unit}));
@@ -1389,16 +976,14 @@ window.delProduto = (id)=>{
   state.products = state.products.filter(x=>x.id!==id);
   saveState();
   toast("Produto excluído.");
-  renderConfig(); renderProducao(); renderVendas(); renderHistorico();
-};
-
+  renderConfig(); renderProducao();
+}
 $("#btnLoadExample").addEventListener("click", ()=>{
   $("#cfgNome").value = "Pão Caseiro Kg";
   $("#cfgBalanca").value = "5210";
   $("#cfgReceita").value = "4753";
   $("#cfgRendKg").value = "14.659";
   $("#cfgRendUn").value = "12.500";
-  $("#cfgLowKg").value = "2.000";
   cfgImageDataUrl = "./assets/pao-caseiro.png";
   $("#cfgImgUrl").value = "";
   cfgIngredients = [
@@ -1419,7 +1004,6 @@ $("#btnLoadExample").addEventListener("click", ()=>{
 
 /* init */
 (function init(){
-  $("#saleDate").value = nowISODate();
   setTab("producao");
   if("serviceWorker" in navigator){
     navigator.serviceWorker.register("./sw.js").catch(()=>{});
@@ -1446,11 +1030,9 @@ $("#btnLoadExample").addEventListener("click", ()=>{
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getDatabase(app, RTDB_URL);
-// ---- RTDB Sync (salva/carrega o estado do app em /delmoro/state) ----
 const STATE_PATH = "delmoro/state";
 const STATE_REF = ref(db, STATE_PATH);
 
-// id do dispositivo (pra debug e para evitar confusão)
 const DEVICE_ID_KEY = "delmoro_device_id";
 let deviceId = "";
 try{
@@ -1481,17 +1063,13 @@ async function hydrateOnce(){
     if(snap.exists()){
       window.__delmoroApp?.hydrateFromRemote?.(snap.val());
     }
-  }catch(e){
-    // pode estar sem permissão ou offline
-  }
+  }catch(e){}
 }
 
 async function saveNow(currentState){
   try{
     await set(STATE_REF, normalizeForSave(currentState));
-  }catch(e){
-    // pode estar sem permissão ou offline
-  }
+  }catch(e){}
 }
 
 function scheduleSave(currentState){
@@ -1507,7 +1085,6 @@ function startRealtime(){
       window.__delmoroApp?.hydrateFromRemote?.(snap.val());
     });
   }catch(e){
-    // fallback: tenta ao menos uma vez
     hydrateOnce();
   }
 }
@@ -1517,14 +1094,11 @@ function stopRealtime(){
   try{ off(STATE_REF); }catch(e){}
 }
 
-// Disponibiliza para o script principal
 window.__delmoroSync = { scheduleSave, hydrateOnce, startRealtime, stopRealtime };
 
-
-// Tenta hidratar assim que o módulo carregar
 startRealtime();
 hydrateOnce();
-// PIN adicional para proteger o acesso admin no tablet
+
   const ADMIN_PIN = "2203";
 
   const $ = (s)=>document.querySelector(s);
@@ -1533,24 +1107,21 @@ hydrateOnce();
   function setUiMode(mode, userEmail=""){
     const isAdmin = mode === "admin";
 
-    // Tabs
-    const allowedTabs = isAdmin ? ["producao","vendas","historico","config"] : ["producao"];
+    const allowedTabs = isAdmin ? ["producao","config"] : ["producao"];
     $$("nav .tab").forEach(t=>{
       const ok = allowedTabs.includes(t.dataset.tab);
       t.style.display = ok ? "" : "none";
     });
-    ["producao","vendas","historico","config"].forEach(k=>{
+    ["producao","config"].forEach(k=>{
       const el = document.getElementById(`tab-${k}`);
       if(!el) return;
-      if(isAdmin) return; // a navegação padrão controla
+      if(isAdmin) return; 
       el.style.display = (k==="producao") ? "" : "none";
     });
 
-    // Header actions
     ["btnExport","fileImport","btnReset"].forEach(id=>{
       const el = document.getElementById(id);
       if(!el) return;
-      // fileImport é input escondido dentro do label; esconder o label
       if(id==="fileImport"){
         const label = el.closest("label");
         if(label) label.style.display = isAdmin ? "" : "none";
@@ -1559,7 +1130,6 @@ hydrateOnce();
       }
     });
 
-    // Admin buttons
     const loginBtn = $("#btnAdminLoginFooter");
     const headerLogin = $("#btnAdminLogin");
     if(headerLogin) headerLogin.style.display = "none";
@@ -1572,13 +1142,11 @@ hydrateOnce();
       badge.textContent = isAdmin ? `ADM${userEmail ? " • " + userEmail : ""}` : "";
     }
 
-    // Mensagem de vazio na produção (sem convidar o operador a ir em Config)
     const empty = $("#emptyProd");
     if(empty && !isAdmin){
       empty.innerHTML = "Nenhum produto cadastrado ainda. Peça ao <strong>admin</strong> para cadastrar os produtos.";
     }
 
-    // Força permanecer em produção quando não-admin
     if(!isAdmin){
       const prodTab = document.querySelector('nav .tab[data-tab="producao"]');
       if(prodTab) prodTab.click();
@@ -1587,25 +1155,20 @@ hydrateOnce();
 
   async function checkAdmin(uid){
   try{
-    // Admin fixo por UID (não depende do banco)
     const HARD_ADMINS = new Set(["1nKjRZ69WAVgEntQchWzi4nBj2G2"]);
     if(HARD_ADMINS.has(uid)) return true;
 
-    // Regra opcional via banco: /admins/<uid> = true
     const snap = await get(ref(db, `admins/${uid}`));
     return snap.exists() && (snap.val() === true || snap.val() === 1 || snap.val() === "true");
   } catch (e){
-    // Se falhar o banco, ainda assim o UID fixo acima mantém o admin funcionando
     return false;
   }
 }
 
-  // Modal controls
   const modal = $("#adminModal");
   const openModal = ()=>{ if(modal){ modal.setAttribute("aria-hidden","false"); } };
   const closeModal = ()=>{ if(modal){ modal.setAttribute("aria-hidden","true"); } };
   $("#btnAdminLoginFooter")?.addEventListener("click", openModal);
-  // mantém o botão do header oculto
   $("#btnAdminLogin")?.addEventListener("click", openModal);
   $("#btnAdminClose")?.addEventListener("click", closeModal);
   modal?.addEventListener("click", (e)=>{
@@ -1613,7 +1176,6 @@ hydrateOnce();
     if(t && t.getAttribute && t.getAttribute("data-close") === "1") closeModal();
   });
 
-  // Login
   $("#btnAdminDoLogin")?.addEventListener("click", async ()=>{
     const email = ($("#adminEmail")?.value || "").trim();
     const pass = $("#adminPass")?.value || "";
@@ -1641,12 +1203,10 @@ hydrateOnce();
     }
   });
 
-  // Logout
   $("#btnAdminLogout")?.addEventListener("click", async ()=>{
     await signOut(auth);
   });
 
-  // Auth watcher
   onAuthStateChanged(auth, async (user)=>{
     if(!user){
       setUiMode("prod");
@@ -1661,7 +1221,6 @@ hydrateOnce();
     }
   });
 
-  // Default: produção até autenticar
   setUiMode("prod");
 </script>
 </body>
