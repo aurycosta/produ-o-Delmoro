@@ -437,12 +437,12 @@
       </div>
       <div class="row">
         <div style="flex:1; min-width:220px">
-          <label>Email</label>
-          <input id="adminEmail" type="email" placeholder="admin@empresa.com" autocomplete="username" value="delmoro@produçao.com" />
+          <label>Usuário</label>
+          <input id="adminUser" type="text" placeholder="Ex: au.costa" autocomplete="username" value="au.costa" />
         </div>
         <div style="flex:1; min-width:220px">
           <label>Senha</label>
-          <input id="adminPass" type="password" placeholder="••••••••" autocomplete="current-password" value="10203040" />
+          <input id="adminPass" type="password" placeholder="••••••••" autocomplete="current-password" value="80605276" />
         </div>
       </div>
       <div class="row">
@@ -1013,7 +1013,6 @@ $("#btnLoadExample").addEventListener("click", ()=>{
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
   import { getDatabase, ref, get, set, onValue, off } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
   const firebaseConfig = {
@@ -1028,83 +1027,82 @@ $("#btnLoadExample").addEventListener("click", ()=>{
   const RTDB_URL = "https://producao-delmoro-default-rtdb.firebaseio.com/";
 
   const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
   const db = getDatabase(app, RTDB_URL);
-const STATE_PATH = "delmoro/state";
-const STATE_REF = ref(db, STATE_PATH);
+  const STATE_PATH = "delmoro/state";
+  const STATE_REF = ref(db, STATE_PATH);
 
-const DEVICE_ID_KEY = "delmoro_device_id";
-let deviceId = "";
-try{
-  deviceId = localStorage.getItem(DEVICE_ID_KEY) || "";
-  if(!deviceId){
-    deviceId = (crypto?.randomUUID?.() || ("dev_"+Math.random().toString(36).slice(2)));
-    localStorage.setItem(DEVICE_ID_KEY, deviceId);
-  }
-}catch(e){ deviceId = "dev_"+Math.random().toString(36).slice(2); }
-
-let saveTimer = null;
-let unsub = null;
-
-function normalizeForSave(currentState){
-  const base = currentState || {};
-  return {
-    products: Array.isArray(base.products) ? base.products : [],
-    productions: Array.isArray(base.productions) ? base.productions : [],
-    sales: Array.isArray(base.sales) ? base.sales : [],
-    breaks: Array.isArray(base.breaks) ? base.breaks : [],
-    __meta: { updatedAt: Date.now(), updatedBy: deviceId }
-  };
-}
-
-async function hydrateOnce(){
+  const DEVICE_ID_KEY = "delmoro_device_id";
+  let deviceId = "";
   try{
-    const snap = await get(STATE_REF);
-    if(snap.exists()){
-      window.__delmoroApp?.hydrateFromRemote?.(snap.val());
+    deviceId = localStorage.getItem(DEVICE_ID_KEY) || "";
+    if(!deviceId){
+      deviceId = (crypto?.randomUUID?.() || ("dev_"+Math.random().toString(36).slice(2)));
+      localStorage.setItem(DEVICE_ID_KEY, deviceId);
     }
-  }catch(e){}
-}
+  }catch(e){ deviceId = "dev_"+Math.random().toString(36).slice(2); }
 
-async function saveNow(currentState){
-  try{
-    await set(STATE_REF, normalizeForSave(currentState));
-  }catch(e){}
-}
+  let saveTimer = null;
+  let unsub = null;
 
-function scheduleSave(currentState){
-  try{ if(saveTimer) clearTimeout(saveTimer); }catch(e){}
-  saveTimer = setTimeout(()=>saveNow(currentState), 500);
-}
-
-function startRealtime(){
-  try{ if(unsub){ try{ unsub(); }catch(e){} unsub = null; } }catch(e){}
-  try{
-    unsub = onValue(STATE_REF, (snap)=>{
-      if(!snap.exists()) return;
-      window.__delmoroApp?.hydrateFromRemote?.(snap.val());
-    });
-  }catch(e){
-    hydrateOnce();
+  function normalizeForSave(currentState){
+    const base = currentState || {};
+    return {
+      products: Array.isArray(base.products) ? base.products : [],
+      productions: Array.isArray(base.productions) ? base.productions : [],
+      sales: Array.isArray(base.sales) ? base.sales : [],
+      breaks: Array.isArray(base.breaks) ? base.breaks : [],
+      __meta: { updatedAt: Date.now(), updatedBy: deviceId }
+    };
   }
-}
 
-function stopRealtime(){
-  try{ if(unsub){ try{ unsub(); }catch(e){} unsub = null; } }catch(e){}
-  try{ off(STATE_REF); }catch(e){}
-}
+  async function hydrateOnce(){
+    try{
+      const snap = await get(STATE_REF);
+      if(snap.exists()){
+        window.__delmoroApp?.hydrateFromRemote?.(snap.val());
+      }
+    }catch(e){}
+  }
 
-window.__delmoroSync = { scheduleSave, hydrateOnce, startRealtime, stopRealtime };
+  async function saveNow(currentState){
+    try{
+      await set(STATE_REF, normalizeForSave(currentState));
+    }catch(e){}
+  }
 
-startRealtime();
-hydrateOnce();
+  function scheduleSave(currentState){
+    try{ if(saveTimer) clearTimeout(saveTimer); }catch(e){}
+    saveTimer = setTimeout(()=>saveNow(currentState), 500);
+  }
+
+  function startRealtime(){
+    try{ if(unsub){ try{ unsub(); }catch(e){} unsub = null; } }catch(e){}
+    try{
+      unsub = onValue(STATE_REF, (snap)=>{
+        if(!snap.exists()) return;
+        window.__delmoroApp?.hydrateFromRemote?.(snap.val());
+      });
+    }catch(e){
+      hydrateOnce();
+    }
+  }
+
+  function stopRealtime(){
+    try{ if(unsub){ try{ unsub(); }catch(e){} unsub = null; } }catch(e){}
+    try{ off(STATE_REF); }catch(e){}
+  }
+
+  window.__delmoroSync = { scheduleSave, hydrateOnce, startRealtime, stopRealtime };
+
+  startRealtime();
+  hydrateOnce();
 
   const ADMIN_PIN = "2203";
 
   const $ = (s)=>document.querySelector(s);
   const $$ = (s)=>Array.from(document.querySelectorAll(s));
 
-  function setUiMode(mode, userEmail=""){
+  function setUiMode(mode, userLabel=""){
     const isAdmin = mode === "admin";
 
     const allowedTabs = isAdmin ? ["producao","config"] : ["producao"];
@@ -1139,7 +1137,7 @@ hydrateOnce();
     if(logoutBtn) logoutBtn.style.display = isAdmin ? "" : "none";
     if(badge){
       badge.style.display = isAdmin ? "" : "none";
-      badge.textContent = isAdmin ? `ADM${userEmail ? " • " + userEmail : ""}` : "";
+      badge.textContent = isAdmin ? `ADM • ${userLabel}` : "";
     }
 
     const empty = $("#emptyProd");
@@ -1153,18 +1151,6 @@ hydrateOnce();
     }
   }
 
-  async function checkAdmin(uid){
-  try{
-    const HARD_ADMINS = new Set(["1nKjRZ69WAVgEntQchWzi4nBj2G2"]);
-    if(HARD_ADMINS.has(uid)) return true;
-
-    const snap = await get(ref(db, `admins/${uid}`));
-    return snap.exists() && (snap.val() === true || snap.val() === 1 || snap.val() === "true");
-  } catch (e){
-    return false;
-  }
-}
-
   const modal = $("#adminModal");
   const openModal = ()=>{ if(modal){ modal.setAttribute("aria-hidden","false"); } };
   const closeModal = ()=>{ if(modal){ modal.setAttribute("aria-hidden","true"); } };
@@ -1176,8 +1162,9 @@ hydrateOnce();
     if(t && t.getAttribute && t.getAttribute("data-close") === "1") closeModal();
   });
 
+  // NOVO SISTEMA DE LOGIN (Sem Firebase Auth Oficial)
   $("#btnAdminDoLogin")?.addEventListener("click", async ()=>{
-    const email = ($("#adminEmail")?.value || "").trim();
+    const userVal = ($("#adminUser")?.value || "").trim();
     const pass = $("#adminPass")?.value || "";
     const pin  = ($("#adminPin")?.value || "").trim();
     const status = $("#adminStatus");
@@ -1187,41 +1174,56 @@ hydrateOnce();
       return;
     }
 
-    if(status) status.textContent = "Entrando...";
-    try{
-      const cred = await signInWithEmailAndPassword(auth, email, pass);
-      const isAdmin = await checkAdmin(cred.user.uid);
-      if(!isAdmin){
-        await signOut(auth);
-        if(status) status.textContent = "Este usuário não é admin.";
-        return;
-      }
-      if(status) status.textContent = "OK.";
-      closeModal();
-    } catch (e){
-      if(status) status.textContent = "Falha no login. Verifique email e senha.";
-    }
-  });
-
-  $("#btnAdminLogout")?.addEventListener("click", async ()=>{
-    await signOut(auth);
-  });
-
-  onAuthStateChanged(auth, async (user)=>{
-    if(!user){
-      setUiMode("prod");
+    if(!userVal || !pass) {
+      if(status) status.textContent = "Preencha usuário e senha.";
       return;
     }
-    const isAdmin = await checkAdmin(user.uid);
-    if(isAdmin){
-      setUiMode("admin", user.email || "");
+
+    if(status) status.textContent = "Verificando credenciais...";
+    
+    let isAuthenticated = false;
+
+    // 1) Usuário e senha mestre garantido direto no código
+    if (userVal === "au.costa" && pass === "80605276") {
+       isAuthenticated = true;
     } else {
-      await signOut(auth);
-      setUiMode("prod");
+       // 2) Checa no Realtime Database futuramente
+       // O Firebase não aceita "." nas chaves, então trocamos "au.costa" por "au_costa" para buscar
+       const dbKey = userVal.replace(/\./g, "_");
+       try {
+         const snap = await get(ref(db, `admins_users/${dbKey}`));
+         if (snap.exists() && String(snap.val()) === String(pass)) {
+           isAuthenticated = true;
+         }
+       } catch(e) {
+          console.error("Erro ao verificar admin no banco de dados:", e);
+       }
+    }
+
+    if (isAuthenticated) {
+      if(status) status.textContent = "Acesso Liberado.";
+      localStorage.setItem("delmoro_admin_user", userVal);
+      setUiMode("admin", userVal);
+      closeModal();
+    } else {
+      if(status) status.textContent = "Usuário ou senha incorretos.";
     }
   });
 
-  setUiMode("prod");
+  // LOGOUT (Limpa a sessão do navegador)
+  $("#btnAdminLogout")?.addEventListener("click", ()=>{
+    localStorage.removeItem("delmoro_admin_user");
+    setUiMode("prod");
+  });
+
+  // VERIFICA SE JÁ ESTÁ LOGADO AO ENTRAR NA PÁGINA
+  const savedUser = localStorage.getItem("delmoro_admin_user");
+  if(savedUser){
+    setUiMode("admin", savedUser);
+  } else {
+    setUiMode("prod");
+  }
+
 </script>
 </body>
 </html>
